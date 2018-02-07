@@ -6,27 +6,26 @@ def globalAlignment(sequence1, sequence2, scoringMatrix):
           
    # Step 1: Initialize Matrix 
     dpTable = constructDPTable(sequence1, sequence2, scoringMatrix)
-    traceback(matrix, seq1,seq2) 
+    traceback(scoringMatrix, sequence1, sequence2)
     
-def constructDPTable(seq1, seq2, matrix):    
+def constructDPTable(sequence1, sequence2, matrix):
     dpTable = [[dict([('score', 0)]) for i in range(len(sequence2)+1)] for j in range(len(sequence1)+1)] 
    
     # Step 2: Base cases
-    dpTable[0][0] = 0
     # consuming letters from seq1 and aligning against space
-    for j in range(1, len(seq1)+1):
-        dpTable[0][j] = dpTable[0][j-1] + matrix[sequence1[j-1]][' '] 
+    for j in range(1, len(sequence1)+1):
+        dpTable[0][j]['score'] = dpTable[0][j-1]['score'] + matrix[sequence1[j-1]][' ']
     # consuming letters from seq2 and aligning against space
-    for i in range(1, len(seq2)+1):
-        dpTable[i][0] = dpTable[i-1][0] + matrix[' '][sequence2[i-1]]
+    for i in range(1, len(sequence2)+1):
+        dpTable[i][0]['score'] = dpTable[i-1][0]['score'] + matrix[' '][sequence2[i-1]]
         
     #Step 3: Fill the DP table    
-    for i in range(1, len(seq2)+1):
-        for j in range(1, len(seq1)+1):
+    for i in range(1, len(sequence2)+1):
+        for j in range(1, len(sequence1)+1):
             #Evaluate all the adjacent cell values
-            south = dpTable[i-1][j] + matrix[' '][sequence2[i-1]]
-            east = dpTable[i][j-1] + matrix[sequence1[j-1]][' ']
-            se = dpTable[i-1][j-1] + matrix[sequence1[j-1]][sequence2[i-1]]
+            south = dpTable[i-1][j]['score'] + matrix[' '][sequence2[i-1]]
+            east = dpTable[i][j-1]['score'] + matrix[sequence1[j-1]][' ']
+            se = dpTable[i-1][j-1]['score'] + matrix[sequence1[j-1]][sequence2[i-1]]
 
             if south > east:
                 if south > se:
