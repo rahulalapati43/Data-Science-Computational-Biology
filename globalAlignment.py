@@ -48,7 +48,7 @@ def constructDPTable(sequence1, sequence2, matrix):
 def traceback(dpTable, sequence1, sequence2):
     j = len(sequence1)
     i = len(sequence2)
-    print dpTable
+    # print dpTable
     S1 = []
     S2 = []
     S3 = []
@@ -57,7 +57,10 @@ def traceback(dpTable, sequence1, sequence2):
         # print dpTable[i-1][j-1]['score']
         #Diagonal
         if(i-1 == dpTable[i][j]['parentI'] and j-1 == dpTable[i][j]['parentJ']):
-            S3.append('|')
+            if(sequence1[i-1]==sequence2[j-1]):
+                S3.append('|')
+            else:
+                S3.append('-')
             S1.append(sequence1[i-1])
             S2.append(sequence2[j-1])
         #Left
@@ -72,45 +75,10 @@ def traceback(dpTable, sequence1, sequence2):
             S3.append('*') 
         i= dpTable[i][j]['parentI']
         j= dpTable[i][j]['parentJ']
-
-
-    #     print int(dpTable[i][j]['score'])
-    #     print int(dpTable[i-1][j-1]['score'])
-    #     if int(dpTable[i][j]['score']) == int(dpTable[i-1][j-1]['score']) + int(val): 
-    #         S2.append(sequence2[i-1])
-    #         S1.append(sequence1[j-1])
-    #         if(val == -1):
-    #             S3.append('*')
-    #         i -= 1
-    #         j -= 1
         
-    #     Left
-    #     elif i>0 and dpTable[i][j]['score'] == dpTable[i-1][j]['score'] + space: 
-    #         S2.append(sequence2[i-1])
-    #         S1.append('_')
-    #         S3.append('*')
-    #         i -= 1
-            
-    #     #Right
-    #     elif j>0 and dpTable[i][j]['score'] == dpTable[i][j-1]['score'] + space: 
-    #         S2.append('_')
-    #         S1.append(sequence1[j-1])
-    #         S3.append('*')
-    #         j -= 1
-            
-    #     #When sequences are unequal    
-    # while i > 0: 
-    #    S2.append(sequence2[i-1])
-    #    S1.append('_')
-    #    S3.append('*')
-    #    i -= 1
-       
-    # while j > 0:
-    #     S2.append('_')
-    #     S1.append(sequence1[j-1])
-    #     S3.append('*')
-    #     j -= 1
-        
-    print(S1[::-1])
-    print(S3[::-1])    
-    print(S2[::-1]) 
+    # print(S1[::-1])
+    # print(S3[::-1])    
+    # print(S2[::-1]) 
+    print(' '.join(S1))
+    print(' '.join(S2))
+    print(' '.join(S3))
