@@ -60,31 +60,38 @@ def traceback(dpTable, sequence1, sequence2):
             if(sequence1[i-1]==sequence2[j-1]):
                 S3.append('|')
             else:
-                S3.append('-')
+                S3.append('*')
             S1.append(sequence1[i-1])
             S2.append(sequence2[j-1])
         #Left
         elif (i == dpTable[i][j]['parentI'] and j-1 == dpTable[i][j]['parentJ']):
             S2.append('_')
             S1.append(sequence1[j-1])
-            S3.append('*')
+            S3.append(' ')
         #Right
         elif (i-1 == dpTable[i][j]['parentI'] and j == dpTable[i][j]['parentJ']): 
             S2.append(sequence2[i-1])
             S1.append('_')
-            S3.append('*') 
+            S3.append(' ') 
         i= dpTable[i][j]['parentI']
         j= dpTable[i][j]['parentJ']
         
     # print(S1[::-1])
     # print(S3[::-1])    
     # print(S2[::-1]) 
-    print(' '.join(S1))
-    print(' '.join(S3))
-    print(' '.join(S2))
+    str1 = (''.join(S1))
+    str2 = (''.join(S3))
+    str3 = (''.join(S2))
     match = S3.count('|')
-    mismatch = S3.count('-')
-    space = S3.count('*')
+    mismatch = S3.count('*')
+    space = S3.count(' ')
+
+    for i in range(0,len(str1),80):
+        print str1[i:i+80]
+        print str2[i:i+80]
+        print str3[i:i+80]
+        print '\n'
     print 'match :'+ str(match)
     print 'mismatch :'+str(mismatch)
     print 'space :'+str(space)
+    print 'score = match - mismatch - space = ' + str(match-mismatch+space)
