@@ -8,7 +8,9 @@ def main(sequenceFiles):
     seq2 = readSequence(sequenceFiles[1])
 
     mat = readMatrix('BLOSUM62.txt')
-    globalAlignment(seq1, seq2, mat)
+    (S1, S2, S3, score) = globalAlignment(seq1, seq2, mat)
+    print 'Score: {0}'.format(score)
+    printAlignment(S1, S2, S3)
 
 def readSequence(fileName):
     fileStream = open(fileName, 'r')
@@ -32,9 +34,28 @@ def readMatrix(fileName):
         outDict[cols[0]] = dict(zip(header, [int(col) for col in cols[1:]]))
     return outDict
 
+def printAlignment(S1, S2, S3):
+    str1 = (''.join(S1))
+    str2 = (''.join(S3))
+    str3 = (''.join(S2))
+    match = S3.count('|')
+    mismatch = S3.count('*')
+    space = S3.count(' ')
+
+    for i in range(0, len(str1), 80):
+        print str1[i:i + 80]
+        print str2[i:i + 80]
+        print str3[i:i + 80]
+        print '\n'
+    '''print 'match :' + str(match)
+    print 'mismatch :' + str(mismatch)
+    print 'space :' + str(space)
+    print 'score = match - mismatch - space = ' + str(match - mismatch + space)'''
+
 if __name__ == "__main__":
     if len(sys.argv) < 3:
         print >> sys.stderr, "Usage: {0} FASTA_sequence1 FASTA_sequence2".format(sys.argv[0])
-        sys.exit()
+        main(['human_hemoglobin_alpha.fasta.txt', 'mouse_hemoglobin_alpha.fasta.txt'])
+        #sys.exit()
     else:
         main(sys.argv[1:3])
