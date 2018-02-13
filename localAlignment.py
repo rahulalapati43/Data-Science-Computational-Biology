@@ -95,7 +95,8 @@ while (dpTable[i][j]["score"] > 0):
     parentJ = dpTable[i][j]["parentJ"]
 
     if ((i-1 == parentI) and (j-1 == parentJ)):
-        if (FASTA1[i-1] == FASTA2[j-1]):
+        FASTAindex = indexList.index(FASTA2[j-1])
+        if (int(BLOSUMmatrix[FASTA1[i-1]][FASTAindex]) > 0):
             Symbols.append('|')
         else:
             Symbols.append('*')
@@ -120,17 +121,64 @@ str1 = ''.join(reversed(Symbols))
 str2 = ''.join(reversed(Seq1))
 str3 = ''.join(reversed(Seq2))
 
-matches = str1.count('|')
-mismatches = str1.count('*')
-spaces = str1.count(' ')
+# str4 = ''.join(FASTA1[0:i])
+# str5 = ''.join(FASTA1[ivalue:len(FASTA1)])
+# str6 = ''.join(FASTA2[0:j])
+# str7 = ''.join(FASTA2[jvalue:len(FASTA2)])
+#
+# str2 = str4 + str2 + str5
+# str3 = str6 + str3 + str7
+#
+# len1 = len(str4)
+# len2 = len(str6)
+# len3 = len(str5)
+# len4 = len(str7)
+#
+# if len1 > 0:
+#     str8 = " "
+#     str12 = "-"
+#     for k in range(0,len1-1):
+#         str8 = str8 + " "
+#         str12 = str12 + "-"
+# else:
+#     str8 = ''
+#     str12 = ''
+#
+# if len2 > 0:
+#     str9 = " "
+#     str13 = "-"
+#     for k in range(0,len2-1):
+#         str9 = str9 + " "
+#         str13 = str13 + "-"
+# else:
+#     str9 = ''
+#     str13 = ''
+#
+# if len3 > 0:
+#     str10 = " "
+#     str14 = "-"
+#     for k in range(0,len3-1):
+#         str10 = str10 + " "
+#         str14 = str14 + "-"
+# else:
+#     str10 = ''
+#     str14 = ''
+#
+# if len4 > 0:
+#     str11 = " "
+#     str15 = "-"
+#     for k in range(0,len4-1):
+#         str11 = str11 + " "
+#         str15 = str15 + "-"
+# else:
+#     str11 = ''
+#     str15 = ''
+#
+# str1 = str8 + str1 + str9
+# str2 = str14 + str2 + str15
+# str3 = str12 + str3 + str13
 
-print "Matches: " + str(matches)
-print "Mismatches: " + str(mismatches)
-print "Spaces: " + str(spaces)
-
-valueofAlignment = matches - mismatches - spaces
-
-print "Score: " + str(valueofAlignment) + "\n"
+print "Score: " + str(maxScore) + "\n"
 
 for i in range(0,len(str2),80):
     print str2[i:i+80]
