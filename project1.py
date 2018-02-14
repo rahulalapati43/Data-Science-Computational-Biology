@@ -1,13 +1,14 @@
 #!/usr/bin/python -uB
 import re
 import sys
+import os
 from globalAlignment import globalAlignment
 
 def main(sequenceFiles):
     seq1 = readSequence(sequenceFiles[0])
     seq2 = readSequence(sequenceFiles[1])
 
-    mat = readMatrix('BLOSUM62.txt')
+    mat = readMatrix(os.path.join(os.path.dirname(__file__), 'BLOSUM62.txt'))
     (S1, S2, S3, score) = globalAlignment(seq1, seq2, mat)
     print 'Score: {0}'.format(score)
     printAlignment(S1, S2, S3)
@@ -55,7 +56,6 @@ def printAlignment(S1, S2, S3):
 if __name__ == "__main__":
     if len(sys.argv) < 3:
         print >> sys.stderr, "Usage: {0} FASTA_sequence1 FASTA_sequence2".format(sys.argv[0])
-        main(['human_hemoglobin_alpha.fasta.txt', 'mouse_hemoglobin_alpha.fasta.txt'])
-        #sys.exit()
+        sys.exit()
     else:
         main(sys.argv[1:3])

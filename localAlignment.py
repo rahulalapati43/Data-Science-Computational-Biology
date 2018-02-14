@@ -1,7 +1,8 @@
 import sys
+import os
 
 # open the BLOSUM and the input FASTA sequence files
-BLOSUMfile = open("BLOSUM62.txt","r")
+BLOSUMfile = open(os.path.join(os.path.dirname(__file__), "BLOSUM62.txt"),"r")
 FASTAfile1 = open(sys.argv[1],"r")
 FASTAfile2 = open(sys.argv[2],"r")
 

@@ -42,8 +42,8 @@ To generate the local alignment between 2 sequences use the following command:
 
 python localAlignment.py human_hemoglobin_alpha.fasta.txt mouse_hemoglobin_alpha.fasta.txt
 
-where localAlignment.py is the program name 
-      
+where localAlignment.py is the program name
+   
       human_hemoglobin_alpha.fasta.txt is the FASTA Sequence 1
 
       mouse_hemoglobin_alpha.fasta.txt is the FASTA Sequence 2.   
