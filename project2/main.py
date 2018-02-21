@@ -41,13 +41,13 @@ def splitSet(fullSet, attribute, attributeTable):
     return subset1, subset2
     
 
-def calculateEntropy(set):
-    numTotal = len(set) + 0.0
+def calculateEntropy(inSet):
+    numTotal = len(inSet) + 0.0
     if numTotal == 0.0:
         return 0.0
     numPos = 0.0
     numNeg = 0.0
-    for t in set:
+    for t in inSet:
         if t[1] == 'e':
             numPos = numPos + 1
         else:
