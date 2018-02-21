@@ -2,6 +2,7 @@
 import math
 import sys
 import random
+from acidAttributes import attributes as ACID_ATTRIBUTES
 
 #sampleSet = [('A', 'e'), ('T', '-'), ('A', 'e'), ('T', '-')]
 #sample attributeTable = {'A': {'one' : 0, 'two' : 1}, 'T' : {'one': 1, 'two' : 1}}
@@ -9,14 +10,14 @@ import random
 def main(faFile, saFile):
     inSet = readData(faFile, saFile)
     print len(inSet)
+    print acidAttributes
     
 def readData(faFile, saFile):
     faStream = open(faFile, 'r')
     saStream = open(saFile, 'r')
     
-    faContent = faStream.read().decode('utf-8')
-    acids = faContent.split()[1::2]
-    acids = [acid for line in acids for acid in line]
+    faContent = faStream.read().decode('utf-8').split()[1::2]
+    acids = [acid for proteinSequence in faContent for acid in proteinSequence]
 
     saContent = saStream.read().decode('utf-8')
     outputs = [isExposed for line in saContent.split()[1::2] for isExposed in line]
