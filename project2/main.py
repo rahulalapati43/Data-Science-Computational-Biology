@@ -9,9 +9,12 @@ from acidAttributes import attributes as ACID_ATTRIBUTES
 
 def main(faFile, saFile):
     inSet = readData(faFile, saFile)
-    print len(inSet)
-    print acidAttributes
     
+    trainingSet, testSet = randomSplit(inSet, 0.25)
+    inSet = None
+    print len(trainingSet)
+    print len(testSet)
+
 def readData(faFile, saFile):
     faStream = open(faFile, 'r')
     saStream = open(saFile, 'r')
@@ -25,8 +28,21 @@ def readData(faFile, saFile):
 
     return zip(acids, outputs)
 
-def randomSeparate(inSet, rate):
-    pass
+# Splits the input list `inList` into two.
+# Items get sent to the second list randomly at the rate specified by `rate`
+def randomSplit(inList, rate):
+    list1 = list()
+    list2 = list()
+
+    random.seed()
+    for item in inList:
+        roll = random.random()
+        if roll <= rate:
+            list2.append(item)
+        else:
+            list1.append(item)
+    
+    return list1, list2
 
 def splitSet(fullSet, attribute, attributeTable):
     subset1 = []
