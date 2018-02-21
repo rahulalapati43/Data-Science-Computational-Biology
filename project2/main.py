@@ -1,7 +1,31 @@
+#!/usr/bin/python -uB
 import math
+import sys
+import random
 
 #sampleSet = [('A', 'e'), ('T', '-'), ('A', 'e'), ('T', '-')]
 #sample attributeTable = {'A': {'one' : 0, 'two' : 1}, 'T' : {'one': 1, 'two' : 1}}
+
+def main(faFile, saFile):
+    inSet = readData(faFile, saFile)
+    print len(inSet)
+    
+def readData(faFile, saFile):
+    faStream = open(faFile, 'r')
+    saStream = open(saFile, 'r')
+    
+    faContent = faStream.read().decode('utf-8')
+    acids = faContent.split()[1::2]
+    acids = [acid for line in acids for acid in line]
+
+    saContent = saStream.read().decode('utf-8')
+    outputs = [isExposed for line in saContent.split()[1::2] for isExposed in line]
+    outputs = [1 if isExposed == 'e' else 0 for isExposed in outputs]
+
+    return zip(acids, outputs)
+
+def randomSeparate(inSet, rate):
+    pass
 
 def splitSet(fullSet, attribute, attributeTable):
     subset1 = []
@@ -42,3 +66,10 @@ def calculateGain(fullSet, subset1, subset2):
     output = output - (propSubset1 * calculateEntropy(subset1))
     output = output - (propSubset2 * calculateEntropy(subset2))
     return output
+
+if __name__ == "__main__":
+    if len(sys.argv) < 3:
+        print >> sys.stderr, "Usage: {0} fa_file sa_file".format(sys.argv[0])
+        sys.exit()
+    else:
+        main(sys.argv[1], sys.argv[2])
