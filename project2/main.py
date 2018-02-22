@@ -3,17 +3,22 @@ import math
 import sys
 import random
 from acidAttributes import attributes as ACID_ATTRIBUTES
+from acidAttributes import attributeTypes as ATTRIBUTES_MAP
+import operator
 
 #sampleSet = [('A', 'e'), ('T', '-'), ('A', 'e'), ('T', '-')]
 #sample attributeTable = {'A': {'one' : 0, 'two' : 1}, 'T' : {'one': 1, 'two' : 1}}
 
 def main(faFile, saFile):
     inSet = readData(faFile, saFile)
+    inSet = filter(lambda tuple: tuple[0] != 'X', inSet)
     
     trainingSet, testSet = randomSplit(inSet, 0.25)
-    inSet = None
     print len(trainingSet)
     print len(testSet)
+
+    decisionTree = buildDecisionTree(trainingSet, ACID_ATTRIBUTES, ATTRIBUTES_MAP)
+    print treeDisplay(decisionTree, ATTRIBUTES_MAP)
 
 def readData(faFile, saFile):
     faStream = open(faFile, 'r')
@@ -44,17 +49,17 @@ def randomSplit(inList, rate):
     
     return list1, list2
 
-def splitSet(fullSet, attribute, attributeTable):
-    subset1 = []
-    subset2 = []
+def splitSetOnAttribute(fullSet, attribute, attributeTable):
+    subsetNo = []
+    subsetYes = []
     for t in fullSet:
         abv = t[0]
         if (attributeTable[abv][attribute] == 0):
-            subset1.append(t)
+            subsetNo.append(t)
         else:
-            subset2.append(t)
+            subsetYes.append(t)
             
-    return subset1, subset2
+    return subsetNo, subsetYes
     
 
 def calculateEntropy(inSet):
@@ -64,7 +69,7 @@ def calculateEntropy(inSet):
     numPos = 0.0
     numNeg = 0.0
     for t in inSet:
-        if t[1] == 'e':
+        if t[1] == 1:
             numPos = numPos + 1
         else:
             numNeg = numNeg + 1
@@ -72,8 +77,8 @@ def calculateEntropy(inSet):
     propNeg = numNeg / numTotal
     if (propPos == 0.0 or propNeg == 0.0):
         return 0.0
-    output = -propPos * math.log2(propPos)
-    output = output - (propNeg * math.log2(propNeg))
+    output = -propPos * math.log(propPos, 2)
+    output = output - (propNeg * math.log(propNeg, 2))
     return output
 
 def calculateGain(fullSet, subset1, subset2):
@@ -83,6 +88,47 @@ def calculateGain(fullSet, subset1, subset2):
     output = output - (propSubset1 * calculateEntropy(subset1))
     output = output - (propSubset2 * calculateEntropy(subset2))
     return output
+
+def buildDecisionTree(dataset, acidAttributes, attributeMap):
+    tree = dict()
+    gains = dict()
+    for attr in attributeMap:
+       split1, split2 = splitSetOnAttribute(dataset, attr, acidAttributes)
+       gains[attr] = calculateGain(dataset, split1, split2)
+
+    gainsIterator = gains.iteritems()
+    maxGainTuple = max(gainsIterator, key=operator.itemgetter(1))
+
+    # base case - stop if there is no gain in entropy on splitting on any attribute
+    if maxGainTuple[1] == 0:
+        return None
+
+    subsetNo, subsetYes = splitSetOnAttribute(dataset, maxGainTuple[0], acidAttributes)
+    tree['attribute'] = maxGainTuple[0]
+    tree['childYes'] = buildDecisionTree(subsetYes, acidAttributes, attributeMap)
+    tree['childNo'] = buildDecisionTree(subsetNo, acidAttributes, attributeMap)
+    return tree
+
+def treeDisplay(decisionTree, attributeMap):
+    string = ''
+
+    attr = decisionTree['attribute']
+    attrName = attributeMap[attr]['name']
+    string = attrName
+
+    if decisionTree['childYes']:
+        subtreeString = treeDisplay(decisionTree['childYes'], attributeMap).split('\n')
+        string += '\n|-Yes--{0}'.format(subtreeString[0])
+        for line in subtreeString[1:]:
+            string += '\n|------{0}'.format(line)
+
+    if decisionTree['childNo']:
+        subtreeString = treeDisplay(decisionTree['childNo'], attributeMap).split('\n')
+        string += '\n|-No---{0}'.format(subtreeString[0])
+        for line in subtreeString[1:]:
+            string += '\n|------' + line
+
+    return string
 
 if __name__ == "__main__":
     if len(sys.argv) < 3:
