@@ -90,7 +90,7 @@ def calculateGain(fullSet, subset1, subset2):
     return output
 
 def buildDecisionTree(dataset, acidAttributes, attributeMap):
-    tree = dict()
+    tree = dict(childYes=None, childNo=None)
     gains = dict()
     for attr in attributeMap:
        split1, split2 = splitSetOnAttribute(dataset, attr, acidAttributes)
@@ -101,7 +101,13 @@ def buildDecisionTree(dataset, acidAttributes, attributeMap):
 
     # base case - stop if there is no gain in entropy on splitting on any attribute
     if maxGainTuple[1] == 0:
-        return None
+        positiveCount = 0
+        for tup in dataset:
+            if tup[1] == 1:
+                positiveCount += 1
+
+        tree['prediction'] = float(positiveCount) / float(len(dataset))
+        return tree
 
     subsetNo, subsetYes = splitSetOnAttribute(dataset, maxGainTuple[0], acidAttributes)
     tree['attribute'] = maxGainTuple[0]
@@ -112,6 +118,10 @@ def buildDecisionTree(dataset, acidAttributes, attributeMap):
 def treeDisplay(decisionTree, attributeMap):
     string = ''
 
+    if 'prediction' in decisionTree:
+        string += '|-Prediction--{0}'.format(decisionTree['prediction'])
+        return string
+    
     attr = decisionTree['attribute']
     attrName = attributeMap[attr]['name']
     string = attrName
