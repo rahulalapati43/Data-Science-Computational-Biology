@@ -19,6 +19,7 @@ def main(faFile, saFile):
 
     decisionTree = buildDecisionTree(trainingSet, ACID_ATTRIBUTES, ATTRIBUTES_MAP)
     print treeDisplay(decisionTree, ATTRIBUTES_MAP)
+    predictions(decisionTree, ACID_ATTRIBUTES)
 
 def readData(faFile, saFile):
     faStream = open(faFile, 'r')
@@ -115,6 +116,27 @@ def buildDecisionTree(dataset, acidAttributes, attributeMap):
     tree['childNo'] = buildDecisionTree(subsetNo, acidAttributes, attributeMap)
     return tree
 
+def predictions(decisionTree, acidAttributes):
+    attr = decisionTree['attribute']
+    prediction = 'Y'
+    predictionResult = {}
+    for amino in acidAttributes:
+        tree = decisionTree
+        while tree.get('prediction') == None:
+            attr = tree['attribute']
+            if (acidAttributes[amino][attr]==1):
+                tree = tree['childYes']
+                prediction = 'Y'
+                # print ' attr='+attr+" Y"
+            else:
+                tree = tree['childNo']
+                prediction = 'N'
+                # print ' attr='+attr+" N"
+        predictionResult[amino] = prediction
+    print "\n========= Predictions ==========="
+    print predictionResult
+    return predictionResult
+
 def treeDisplay(decisionTree, attributeMap):
     string = ''
 
@@ -146,3 +168,4 @@ if __name__ == "__main__":
         sys.exit()
     else:
         main(sys.argv[1], sys.argv[2])
+
