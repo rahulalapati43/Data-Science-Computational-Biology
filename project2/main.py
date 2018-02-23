@@ -127,11 +127,8 @@ def predictions(decisionTree, acidAttributes):
                 tree = tree['childYes']
             else:
                 tree = tree['childNo']
-        confidence = 1 if tree.get('prediction')>0.5 else 0
-        if confidence == 0: 
-            prediction = 'N'
-        else:
-            prediction = 'Y'
+        confidence = 1 if tree.get('prediction')>=0.5 else 0
+        prediction = 'N' if confidence == 0 else 'Y'
         predictionResult[amino] = prediction
     print "\n========= Predictions ==========="
     print predictionResult
