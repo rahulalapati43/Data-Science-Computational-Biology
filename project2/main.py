@@ -13,13 +13,14 @@ def main(faFile, saFile):
     inSet = readData(faFile, saFile)
     inSet = filter(lambda tuple: tuple[0] != 'X', inSet)
     
-    trainingSet, testSet = randomSplit(inSet, 0.25)
-    print len(trainingSet)
-    print len(testSet)
+    trainingSet, testSet = randomSplit(inSet, 0.75)
+    # print len(trainingSet)
+    # print len(testSet)
 
     decisionTree = buildDecisionTree(trainingSet, ACID_ATTRIBUTES, ATTRIBUTES_MAP)
     print treeDisplay(decisionTree, ATTRIBUTES_MAP)
-    predictions(decisionTree, ACID_ATTRIBUTES)
+    decisionTreeResult = predictions(decisionTree, ACID_ATTRIBUTES)
+    evaluateAccuracy(testSet, decisionTreeResult)
 
 def readData(faFile, saFile):
     faStream = open(faFile, 'r')
@@ -48,7 +49,7 @@ def randomSplit(inList, rate):
         else:
             list1.append(item)
     
-    return list1, list2
+    return list2, list1
 
 def splitSetOnAttribute(fullSet, attribute, attributeTable):
     subsetNo = []
@@ -96,7 +97,6 @@ def buildDecisionTree(dataset, acidAttributes, attributeMap):
     for attr in attributeMap:
        split1, split2 = splitSetOnAttribute(dataset, attr, acidAttributes)
        gains[attr] = calculateGain(dataset, split1, split2)
-
     gainsIterator = gains.iteritems()
     maxGainTuple = max(gainsIterator, key=operator.itemgetter(1))
 
@@ -117,7 +117,6 @@ def buildDecisionTree(dataset, acidAttributes, attributeMap):
     return tree
 
 def predictions(decisionTree, acidAttributes):
-    attr = decisionTree['attribute']
     predictionResult = {}
     for amino in acidAttributes:
         tree = decisionTree
@@ -133,6 +132,43 @@ def predictions(decisionTree, acidAttributes):
     print "\n========= Predictions ==========="
     print predictionResult
     return predictionResult
+
+def evaluateAccuracy(testData, decisionTreeResult):
+
+    TP = 0.0
+    FP = 0.0
+    TN = 0.0
+    FN = 0.0
+
+    for set in testData:
+        aminoAcid = set[0]
+        if (set[1] == 1):
+            label = 'Y'
+        else:
+            label = 'N'
+
+        if ((decisionTreeResult[aminoAcid] == 'Y') and (label == 'Y')):
+            TP = TP + 1.0
+        elif ((decisionTreeResult[aminoAcid] == 'Y') and (label == 'N')):
+            FP = FP + 1.0
+        elif ((decisionTreeResult[aminoAcid] == 'N') and (label == 'Y')):
+            FN = FN + 1.0
+        elif ((decisionTreeResult[aminoAcid] == 'N') and (label == 'N')):
+            TN = TN + 1.0
+
+    Precision = (TP) / (TP + FP)
+    Recall = (TP) / (TP + FN)
+    Accuracy = (TP + TN) / (TP + TN + FP + FN)
+
+    F1Measure = (2 * ((Precision * Recall) / (Precision + Recall)))
+    MCC = (((TP * TN) - (FP * FN)) / (math.sqrt((TP + FP) * (TP + FN) * (TN + FP) * (TN + FN))))
+
+    print "\n========= Accuracy ==========="
+    print "Precision:" + str(Precision)
+    print "Recall:" + str(Recall)
+    print "Accuracy:" + str(Accuracy)
+    print "F-1 Measure:" + str(F1Measure)
+    print "Mathews Correlation Coefficient (MCC):" + str(MCC)
 
 def treeDisplay(decisionTree, attributeMap):
     string = ''
