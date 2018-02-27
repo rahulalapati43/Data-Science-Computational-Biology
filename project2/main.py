@@ -10,13 +10,12 @@ import operator
 #sample attributeTable = {'A': {'one' : 0, 'two' : 1}, 'T' : {'one': 1, 'two' : 1}}
 
 def main(faFile, saFile):
-    inSet = readData(faFile, saFile)
-    inSet = filter(lambda tuple: tuple[0] != 'X', inSet)
-    
-    trainingSet, testSet = randomSplit(inSet, 0.75)
-    # print len(trainingSet)
-    # print len(testSet)
+    proteinTuples = readData(faFile, saFile)
+    trainingProteins, testProteins = randomSplit(proteinTuples, 0.75)
 
+    trainingSet = filter(lambda tuple: tuple[0] != 'X', expandProteins(trainingProteins))
+    testSet = filter(lambda tuple: tuple[0] != 'X', expandProteins(testProteins))
+    
     decisionTree = buildDecisionTree(trainingSet, ACID_ATTRIBUTES, ATTRIBUTES_MAP)
     print treeDisplay(decisionTree, ATTRIBUTES_MAP)
     decisionTreeResult = predictions(decisionTree, ACID_ATTRIBUTES)
@@ -26,12 +25,29 @@ def readData(faFile, saFile):
     faStream = open(faFile, 'r')
     saStream = open(saFile, 'r')
     
-    faContent = faStream.read().decode('utf-8').split()[1::2]
-    acids = [acid for proteinSequence in faContent for acid in proteinSequence]
+    #proteinSequences = faStream.read().decode('utf-8').split()[1::2]
+    proteinSequences = decodeFastaformat(faStream)
+    exposedSequences = decodeFastaformat(saStream)
+    #exposedSequences = saStream.read().decode('utf-8').split()[1::2]
 
-    saContent = saStream.read().decode('utf-8')
-    outputs = [isExposed for line in saContent.split()[1::2] for isExposed in line]
-    outputs = [1 if isExposed == 'e' else 0 for isExposed in outputs]
+    return zip(proteinSequences, exposedSequences)
+
+def decodeFastaformat(fastaStream):
+    output = list()
+    proteinLine = ''
+    for line in iter(fastaStream.readline, ''):
+        if line[len(line) - 1] == '\n':
+            line = line[:len(line) - 1]
+        if line[0] != '>':
+            proteinLine += line
+        else:
+            output.append(proteinLine)
+            proteinLine = ''
+    return output
+
+def expandProteins(tuples):
+    acids = [acid for tuple in tuples for acid in tuple[0]]
+    outputs = [1 if isExposed == 'e' else 0 for tuple in tuples for isExposed in tuple[1]]
 
     return zip(acids, outputs)
 
