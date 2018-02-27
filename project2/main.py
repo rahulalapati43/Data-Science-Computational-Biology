@@ -38,7 +38,7 @@ def decodeFastaformat(fastaStream):
         else:
             output.append(proteinLine)
             proteinLine = ''
-    if proteinline != '':
+    if proteinLine != '':
         output.append(proteinLine)
     return output
 
