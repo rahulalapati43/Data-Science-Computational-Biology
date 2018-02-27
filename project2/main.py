@@ -6,9 +6,6 @@ from acidAttributes import attributes as ACID_ATTRIBUTES
 from acidAttributes import attributeTypes as ATTRIBUTES_MAP
 import operator
 
-#sampleSet = [('A', 'e'), ('T', '-'), ('A', 'e'), ('T', '-')]
-#sample attributeTable = {'A': {'one' : 0, 'two' : 1}, 'T' : {'one': 1, 'two' : 1}}
-
 def main(faFile, saFile):
     proteinTuples = readData(faFile, saFile)
     trainingProteins, testProteins = randomSplit(proteinTuples, 0.75)
@@ -25,10 +22,8 @@ def readData(faFile, saFile):
     faStream = open(faFile, 'r')
     saStream = open(saFile, 'r')
     
-    #proteinSequences = faStream.read().decode('utf-8').split()[1::2]
     proteinSequences = decodeFastaformat(faStream)
     exposedSequences = decodeFastaformat(saStream)
-    #exposedSequences = saStream.read().decode('utf-8').split()[1::2]
 
     return zip(proteinSequences, exposedSequences)
 
