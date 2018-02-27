@@ -38,6 +38,8 @@ def decodeFastaformat(fastaStream):
         else:
             output.append(proteinLine)
             proteinLine = ''
+    if proteinline != '':
+        output.append(proteinLine)
     return output
 
 def expandProteins(tuples):
@@ -55,7 +57,7 @@ def randomSplit(inList, rate):
     random.seed()
     for item in inList:
         roll = random.random()
-        if roll <= rate:
+        if roll < rate:
             list2.append(item)
         else:
             list1.append(item)
