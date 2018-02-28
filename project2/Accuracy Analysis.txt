@@ -1,78 +1,82 @@
-1. 0.1
+1. 0.0
 
-MCC = (((TP * TN) - (FP * FN))/(math.sqrt((TP + FP) * (TP + FN) * (TN + FP) * (TN + FN))))
+MCC = (((TP * TN) - (FP * FN)) / (math.sqrt((TP + FP) * (TP + FN) * (TN + FP) * (TN + FN))))
 ZeroDivisionError: float division by zero
 
-2. 0.2
+2. 0.1
 
-========= Accuracy ===========
-Precision:0.480798431849
-Recall:0.995744368026
-Accuracy:0.48596309722
-F-1 Measure:0.648477417261
-Mathews Correlation Coefficient (MCC):0.0782723426472
-
-3. 0.3
-
-========= Accuracy ===========
-Precision:0.60206299437
-Recall:0.832498521973
-Accuracy:0.660026136876
-F-1 Measure:0.698773175271
-Mathews Correlation Coefficient (MCC):0.354285717146
-
-4. 0.4
-
-========= Accuracy ===========
-Precision:0.603722598692
-Recall:0.834733410522
-Accuracy:0.662204209904
-F-1 Measure:0.700678255835
-Mathews Correlation Coefficient (MCC):0.358860878895
-
-5. 0.5 
-
-========= Accuracy ===========
-Precision:0.655788906839
-Recall:0.697868229747
-Accuracy:0.682429173732
-F-1 Measure:0.676174536571
-Mathews Correlation Coefficient (MCC):0.365891430328
-
-6. 0.6
-
-========= Accuracy ===========
-Precision:0.710166951603
-Recall:0.549540647585
-Accuracy:0.678636993015
-F-1 Measure:0.619613006588
-Mathews Correlation Coefficient (MCC):0.357774989699
-
-7. 0.7
-
-========= Accuracy ===========
-Precision:0.757683799051
-Recall:0.288446443173
-Accuracy:0.61765094824
-F-1 Measure:0.41782789191
-Mathews Correlation Coefficient (MCC):0.265540951575
-
-8. 0.8
-
-Precision = (TP)/(TP + FP)
+MCC = (((TP * TN) - (FP * FN)) / (math.sqrt((TP + FP) * (TP + FN) * (TN + FP) * (TN + FN))))
 ZeroDivisionError: float division by zero
 
-9. 0.9
+3. 0.2
 
-Precision = (TP)/(TP + FP)
+========= Accuracy ===========
+Precision:0.480752222129
+Recall:0.995995356936
+Accuracy:0.485953714559
+F-1 Measure:0.648488594618
+Mathews Correlation Coefficient (MCC):0.0794484078158
+
+4. 0.3
+
+========= Accuracy ===========
+Precision:0.591151101527
+Recall:0.854634859673
+Accuracy:0.64802810952
+F-1 Measure:0.69888400117
+Mathews Correlation Coefficient (MCC):0.33890493985
+
+5. 0.4
+
+========= Accuracy ===========
+Precision:0.604359928541
+Recall:0.835210262551
+Accuracy:0.661652346538
+F-1 Measure:0.701275446957
+Mathews Correlation Coefficient (MCC):0.357206651325
+
+6. 0.5
+
+========= Accuracy ===========
+Precision:0.654604492874
+Recall:0.696596921697
+Accuracy:0.681930225232
+F-1 Measure:0.674948190177
+Mathews Correlation Coefficient (MCC):0.364829883476
+
+7. 0.6
+
+========= Accuracy ===========
+Precision:0.707732259261
+Recall:0.542205656654
+Accuracy:0.67453166677
+F-1 Measure:0.614008791128
+Mathews Correlation Coefficient (MCC):0.350143651055
+
+8. 0.7
+
+========= Accuracy ===========
+Precision:0.758569552138
+Recall:0.287936053525
+Accuracy:0.618390155059
+F-1 Measure:0.417426379724
+Mathews Correlation Coefficient (MCC):0.266435936065
+
+9. 0.8
+
+Precision = (TP) / (TP + FP)
 ZeroDivisionError: float division by zero
 
-10. 1.0
+10. 0.9
 
-Precision = (TP)/(TP + FP)
+Precision = (TP) / (TP + FP)
 ZeroDivisionError: float division by zero
 
-11 0.0
+11. 1.0
 
-MCC = (((TP * TN) - (FP * FN))/(math.sqrt((TP + FP) * (TP + FN) * (TN + FP) * (TN + FN))))
+ Precision = (TP) / (TP + FP)
 ZeroDivisionError: float division by zero
+
+
+
+
