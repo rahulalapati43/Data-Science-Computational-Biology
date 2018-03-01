@@ -184,7 +184,7 @@ def evaluateAccuracy(testData, decisionTreeResult):
     print "Recall:" + str(Recall)
     print "Accuracy:" + str(Accuracy)
     print "F-1 Measure:" + str(F1Measure)
-    print "Mathews Correlation Coefficient (MCC):" + str(MCC)
+    print "Matthew's Correlation Coefficient (MCC):" + str(MCC)
 
 def treeDisplay(decisionTree, attributeMap):
     string = ''
