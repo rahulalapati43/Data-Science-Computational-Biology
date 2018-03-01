@@ -29,8 +29,8 @@ AminoAcidAttributes["Y"] = {"Hydrophobic" : 1, "Polar" : 1, "Small" : 0, "Prolin
 AttributesList = ["Hydrophobic", "Polar", "Small", "Proline", "Tiny", "Aliphatic", "Aromatic", "Positive", "Negative", "Charged"]
 
 def readData(AAfile,SAfile):
-    AA = []
-    SA = []
+    proteinSequences = []
+    solventAccessibility = []
 
     FASTAfile = open(AAfile, "r")
     SolventAccessibilityfile = open(SAfile, "r")
@@ -38,17 +38,29 @@ def readData(AAfile,SAfile):
     for line in FASTAfile:
         line = line.strip()
         if not line.startswith(">"):
-            for i in range(len(line)):
-                AA.append(line[i])
+            proteinSequences.append(line)
 
     for line in SolventAccessibilityfile:
         line = line.strip()
         if not line.startswith(">"):
-            for i in range(len(line)):
-                if (line[i] == 'e'):
-                    SA.append(1)
-                else:
-                    SA.append(0)
+            solventAccessibility.append(line)
+
+    return zip(proteinSequences,solventAccessibility)
+
+def getAASA(proteinSequences):
+    AA = []
+    SA = []
+
+    for line in proteinSequences:
+        for aminoAcid in line[0]:
+            AA.append(aminoAcid)
+
+    for line in proteinSequences:
+        for solAccessibility in line[1]:
+            if (solAccessibility == 'e'):
+                SA.append(1)
+            else:
+                SA.append(0)
 
     return zip(AA,SA)
 
@@ -153,7 +165,7 @@ def calculateLabels(decisionTree):
             else:
                 tree = tree['childNo']
 
-        if (tree.get('prediction') >= 0.5):
+        if (tree.get('prediction') >= 0.4):
             confidence = 1
         else:
             confidence = 0
@@ -212,13 +224,14 @@ def randomDivision(inputData):
 
 if (len(sys.argv) == 3):
     inData = readData(sys.argv[1],sys.argv[2])
-    inData = filter(lambda tuple: tuple[0] != 'X', inData)
     trainData, testData = randomDivision(inData)
+    trainData = filter(lambda tuple: tuple[0] != 'X', getAASA(trainData))
     decisionTree = buildDecisionTree(trainData)
     print treeDisplay(decisionTree)
     decisionTreeResult = calculateLabels(decisionTree)
     print "\n========= Predictions ==========="
     print decisionTreeResult
+    testData = filter(lambda tuple: tuple[0] != 'X', getAASA(testData))
     evaluateAccuracy(testData,decisionTreeResult)
 else:
     print "Usage: " + sys.argv[0] + " FASTA_File SolventAccessibility_File"
