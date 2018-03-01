@@ -8,6 +8,7 @@ import os
 def predict(faFile):
     decisionTree = cPickle.load(open(os.path.join(os.path.dirname(__file__), 'decisionTree.pickle'), 'rb'))
     predictionsMap = predictions(decisionTree, ACID_ATTRIBUTES)
+    predictionsMap['X'] = 'Y'
     sequences = readFasta(faFile)
 
     for proteinSequenceTuple in sequences:
