@@ -1,6 +1,5 @@
 #!/usr/bin/python -uB
-from main import predictions
-from main import decodeFastaformat
+from id3 import predictions
 from acidAttributes import attributes as ACID_ATTRIBUTES
 import cPickle
 import sys
