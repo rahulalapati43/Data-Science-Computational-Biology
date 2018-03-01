@@ -5,6 +5,7 @@ import random
 from acidAttributes import attributes as ACID_ATTRIBUTES
 from acidAttributes import attributeTypes as ATTRIBUTES_MAP
 import operator
+import cPickle
 
 def main(faFile, saFile):
     proteinTuples = readData(faFile, saFile)
@@ -14,8 +15,12 @@ def main(faFile, saFile):
     testSet = filter(lambda tuple: tuple[0] != 'X', expandProteins(testProteins))
     
     decisionTree = buildDecisionTree(trainingSet, ACID_ATTRIBUTES, ATTRIBUTES_MAP)
+#    cPickle.dump(decisionTree, open('decisionTree.pickle', 'wb'))
     print treeDisplay(decisionTree, ATTRIBUTES_MAP)
+
     decisionTreeResult = predictions(decisionTree, ACID_ATTRIBUTES)
+    print "\n========= Predictions ==========="
+    print decisionTreeResult 
     evaluateAccuracy(testSet, decisionTreeResult)
 
 def readData(faFile, saFile):
@@ -142,8 +147,6 @@ def predictions(decisionTree, acidAttributes):
         confidence = 1 if tree.get('prediction')>=0.4 else 0
         prediction = 'N' if confidence == 0 else 'Y'
         predictionResult[amino] = prediction
-    print "\n========= Predictions ==========="
-    print predictionResult
     return predictionResult
 
 def evaluateAccuracy(testData, decisionTreeResult):
