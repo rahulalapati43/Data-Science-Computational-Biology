@@ -96,13 +96,14 @@ def generatePSSM(inFile, name, blastpgp, nrdb):
 			pssms[str(aminoAcidCount)] = pssm[str(key)]
 			
 	of = open(name, 'w')
-	of.write('\n\n')
+	of.write('\n\n        ')
 	of.write(' '.join(header))
 	of.write('\n')
 	keyList = map(int, pssms.keys())
 	keyList.sort()
 	for key in keyList:
-		of.write(' '.join(pssm[str(key)]))
+		of.write(str(key) + ' ')
+		of.write(' '.join(pssms[str(key)]))
 		of.write('\n')
 	of.write('\n')
 	of.close()
