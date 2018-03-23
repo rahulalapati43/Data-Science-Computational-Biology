@@ -3,7 +3,9 @@ import sys
 import cPickle
 
 def main(blastpgp, nrdb, faFile, ssFile):
-	proteinTuples = readData(faFile, ssFile)
+	proteinSequences = readData(faFile)
+	secondaryStructure = readData(ssFile)
+	proteinTuples = zip(proteinSequences, secondaryStructure)
         trainingProteins, testProteins = randomSplit(proteinTuples, 0.75)
         trainFA, trainSS = explodeTuples(trainingProteins)
         testFA, testSS = explodeTuples(testProteins)

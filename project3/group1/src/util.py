@@ -2,43 +2,25 @@ import random
 import os
 import subprocess
 
-def readData(faFile, ssFile):
-	proteinSequences = []
-	secondaryStructure = []
-	
-	fastaFile = open(faFile, "r")
-	ssFile = open(ssFile, "r")
-	
-	proteinLine = ''
-	for line in fastaFile:
+def readData(File):
+	Sequences = []	
+	File = open(File, "r")
+
+	SeqLine = ''
+	for line in File:
 		if line[len(line) - 1] == '\n':
 			line = line[:len(line) - 1] 
 		if not line.startswith(">"):
-				proteinLine += line
+				SeqLine += line
 		else:
-			if proteinLine != '':
-				proteinSequences.append(proteinLine)
-			proteinLine = ''
+			if SeqLine != '':
+				Sequences.append(SeqLine)
+			SeqLine = ''
 
-	if proteinLine != '':
-		proteinSequences.append(proteinLine)
-	
-	proteinLine = ''
-	for line in ssFile:
-		if line[len(line) - 1] == '\n':
-			line = line[:len(line) - 1]
-		if not line.startswith(">"):
-			if line.strip():
-				proteinLine += line
-		else:
-			if proteinLine != '':
-				secondaryStructure.append(proteinLine)
-			proteinLine = ''
+	if SeqLine != '':
+		Sequences.append(SeqLine)
 
-	if proteinLine != '':
-		secondaryStructure.append(proteinLine)
-	
-	return zip(proteinSequences, secondaryStructure)
+	return Sequences
 
 def decodeFastaformat(fastaStream):
     output = list()
