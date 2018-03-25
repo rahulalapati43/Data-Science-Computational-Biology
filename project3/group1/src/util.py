@@ -119,25 +119,34 @@ def readPSSM(inFile):
 
 def slidingWindow(inMatrix):
 	pssmMatrix = {}
-	keyList = []
+
 	keyList = inMatrix.keys()
+	keyListInt = map(int, keyList)
+	minKeyList = min(keyListInt)
+	maxKeyList = max(keyListInt)
+
 	addList = []
 	
 	for index in range(0,21):
 		addList.append(-1)
 	
-	inMatrix[str(max(map(int,keyList)) + 1)] = addList
-	inMatrix[str(max(map(int,keyList)) + 2)] = addList
-	inMatrix[str(min(map(int,keyList)) - 1)] = addList
-	inMatrix[str(min(map(int,keyList)) - 2)] = addList 
-	
+	'''inMatrix[str(maxKeyList + 1)] = addList
+	inMatrix[str(maxKeyList + 2)] = addList
+	inMatrix[str(minKeyList - 1)] = addList
+	inMatrix[str(minKeyList - 2)] = addList'''
+
 	keyList = inMatrix.keys()
+	keyListInt = map(int, keyList)
+	minKeyList = min(keyListInt)
+	maxKeyList = max(keyListInt)
+	keyRange = range(1, len(keyList) + 1)
 		
-	for index in range(0,len(keyList)):
-		if (int(keyList[index]) > (min(map(int,keyList)) + 1) and int(keyList[index]) < (max(map(int,keyList)) - 1)):
-			pssmMatrix[keyList[index]] = (inMatrix[keyList[index]] + inMatrix[str(int(keyList[index]) - 1)][1:] + 
-							inMatrix[str(int(keyList[index]) - 2)][1:] + 
-							inMatrix[str(int(keyList[index]) + 1)][1:] + inMatrix[str(int(keyList[index]) + 2)][1:])
+	for index in keyRange:
+		pssmMatrix[str(index)] = (inMatrix[str(index)] +
+					(inMatrix[str(index - 1)][1:21] if str(index - 1) in inMatrix else addList[1:]) +
+					(inMatrix[str(index - 2)][1:21] if str(index - 2) in inMatrix else addList[1:]) +
+					(inMatrix[str(index + 1)][1:21] if str(index + 1) in inMatrix else addList[1:]) +
+					(inMatrix[str(index + 2)][1:21] if str(index + 2) in inMatrix else addList[1:]))
 
 	return pssmMatrix		 
 
