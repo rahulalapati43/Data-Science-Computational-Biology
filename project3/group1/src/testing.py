@@ -1,3 +1,4 @@
+#!/usr/bin/python -uB
 from util import *
 import sys
 import cPickle

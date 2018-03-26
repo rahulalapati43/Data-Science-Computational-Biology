@@ -24,17 +24,20 @@ def readData(File):
 
 def decodeFastaformat(fastaStream):
     output = list()
+    proteinName = ''
     proteinLine = ''
     for line in iter(fastaStream.readline, ''):
         if line[len(line) - 1] == '\n':
             line = line[:len(line) - 1]
         if line[0] != '>':
             proteinLine += line
-        elif proteinLine != '':
-            output.append(proteinLine)
-            proteinLine = ''
+        else:
+            if proteinLine != '':
+                output.append((proteinName, proteinLine))
+                proteinLine = ''
+            proteinName = line
     if proteinLine != '':
-        output.append(proteinLine)
+        output.append((proteinName, proteinLine))
     return output
 
 def randomSplit(inList, rate):
@@ -61,7 +64,7 @@ def writeFile(inList,name):
 	outFile.close()
 	
 def generatePSSM(inFile, name, blastpgp, nrdb):
-	fastaSequences = decodeFastaformat(open(inFile, 'r'))
+	fastaSequences = readData(inFile)
 	print str(len(fastaSequences)) + '   ' + inFile
 	aminoAcidCount = 0
 	pssms = {}
