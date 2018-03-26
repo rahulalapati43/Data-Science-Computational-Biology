@@ -21,6 +21,7 @@ def main(blastPath, nrdb, faFile):
         sequenceLength = len(proteinTuple[1])
         for proteinAcidInd in range(counter, counter + sequenceLength):
             predictionSequence += predictions[str(proteinAcidInd)][1]
+        counter += sequenceLength
         print predictionSequence
 
 if __name__ == "__main__":
