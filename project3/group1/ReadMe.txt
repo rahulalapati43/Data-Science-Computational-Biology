@@ -14,12 +14,12 @@ Effort Certification (5-point scale)
 ------------------
 Usage Instructions
 ------------------
-The following 3 files are required to run our program:
+The following 5 files are required to run our program:
 
 	1. project3.py - main executable.
 	2. training.py - File that can make a new gaussianModel.pickle file.
-	3. testing.py - File that can tests the accuracy of a guassianModel given a test pssm and ss files.
-  4. util.py - Common functions used in both training.py and testing.py
+	3. testing.py - File that can test the accuracy of a guassianModel given a test pssm and ss files.
+        4. util.py - Common functions used in both training.py and testing.py
 	5. gaussianModel.pickle - Snapshot of one our generated gaussian model.
 
 Please download the above mentioned files and place them in the same directory.  To classify a multifasta file of protein sequences using our trained gaussian model, use the following command:
@@ -28,6 +28,6 @@ Please download the above mentioned files and place them in the same directory. 
 
 where 
 		-project3.py is the main executable
-    -/path/to/blastpgp is the path to the blastpgp binary (blast/bin/blastgpg in the blast archive)
-    -/path/to/nr_file is the nr file in the nr database (nr/nr in the nr_database.tar.gz archive)
+                -/path/to/blastpgp is the path to the blastpgp binary (blast/bin/blastgpg in the blast archive)
+                -/path/to/nr_file is the nr file in the nr database (nr/nr in the nr_database.tar.gz archive)
 		-multifasta_file.fa is the file containing protein sequences in MULTI-FASTA format.
