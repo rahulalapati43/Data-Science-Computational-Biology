@@ -28,6 +28,6 @@ Please download the above mentioned files and place them in the same directory. 
 
 where 
 		-project3.py is the main executable
-                -/path/to/blastpgp is the path to the blastpgp binary (blast/bin/blastgpg in the blast archive)
+                -/path/to/blastpgp is the path to the blastpgp binary (blast/bin/blastpgp in the blast archive)
                 -/path/to/nr_file is the nr file in the nr database (nr/nr in the nr_database.tar.gz archive)
 		-multifasta_file.fa is the file containing protein sequences in MULTI-FASTA format.
