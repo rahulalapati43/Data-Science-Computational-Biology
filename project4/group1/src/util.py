@@ -28,13 +28,16 @@ def randomSplit(inList, rate):
 
 def generatePSSM(multifastaFile, outfileDir, blastpgp, nrdb):
     fastaSequences = decodeFastaformat(open(multifastaFile), 'r')
+    pssmFiles = list()
     aminoAcidCount = 0
     for ind, seq in enumerate(fastaSequences):
         outname = os.path.join(outfileDir, seq[0] + '.pssm')
         process = subprocess.Popen([blastpgp, '-d', nrdb, '-j 3', '-b 1', '-a 4', '-Q', outname], stdout=subprocess.PIPE, stdin=subprocess.PIPE)
         result = process.communicate(input=seq[1])
+        pssmFiles.append(outname)
         print 'done with ' + seq
         header, pssm = readPSSM(outname)
+    return pssmFiles
 
 def readPSSM(inFile):
     count = 0
@@ -80,9 +83,9 @@ def slidingWindow(inMatrix, windowSize):
     keyRange = range(1, len(keyList) + 1)
 
     for index in keyRange:
-        pssmEntry = (inMatrix[str(index - 1)][1:21] if str(index - 1) in inMatrix else addList[1:]) +
+        pssmEntry = ((inMatrix[str(index - 1)][1:21] if str(index - 1) in inMatrix else addList[1:]) +
                     (inMatrix[str(index - 2)][1:21] if str(index - 2) in inMatrix else addList[1:]) +
-                    (inMatrix[str(index)] +
+                    inMatrix[str(index)] +
                     (inMatrix[str(index + 1)][1:21] if str(index + 1) in inMatrix else addList[1:]) +
                     (inMatrix[str(index + 2)][1:21] if str(index + 2) in inMatrix else addList[1:]))
         pssmMatrix.append(pssmEntry)
