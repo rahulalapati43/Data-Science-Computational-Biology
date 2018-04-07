@@ -74,29 +74,8 @@ def randomSplit(inList, rate):
     testData = inList[(int((len(inList)) * rate)):]
     return trainData, testData
 
-def getSubsetBatch(dataset):
-    return dataset
-
-def getSubsetStochastic(dataset):
-    return random.choice(dataset)
-
-def predict(instance, weights): #adjusts with or without bias
-    i = 0 #iterator for instance
-    j = 0 #iterator for weights
-    temp = 0
-
-    if (len(instance) + 1) == len(weights): #weights contain bias
-        temp += weights[j] #bias
-        j += 1
-        
-    while (i < len(instance)):
-        temp += instance[i] * weights[j]
-        i += 1
-        j += 1
-    temp = -temp
-    temp = 1 + math.exp(temp)
-    return 1 / temp
-
+def columnSum(listOfTuples):
+    return [sum(x) for x in zip(*listOfTuples)]
 
 if __name__ == "__main__":
     pass
