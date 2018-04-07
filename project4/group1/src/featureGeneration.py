@@ -6,38 +6,15 @@ import subprocess
 
 def main(blastpgp, nrdb, outdir, fastaFiles):
     for multifasta in fastaFiles:
-        generatePSSM(multifasta, outdir, blastpgp, nrdb)
+        util.generatePSSM(multifasta, outdir, blastpgp, nrdb)
 
-def generatePSSM(multifastaFile, outfileDir, blastpgp, nrdb):
-    fastaSequences = util.decodeFastaformat(open(multifastaFile, 'r'))
-    pssmFiles = list()
-    aminoAcidCount = 0
-    for ind, seq in enumerate(fastaSequences):
-        outname = os.path.join(outfileDir, seq[0] + '.pssm')
-        process = subprocess.Popen([blastpgp, '-d', nrdb, '-j 3', '-b 1', '-a 4', '-Q', outname], stdout=subprocess.PIPE, stdin=subprocess.PIPE)
-        result = process.communicate(input=seq[1])
-        pssmFiles.append(outname)
-        pssmFileWriteSequenceName(outname, seq[0], seq[1])
-        sequenceName, sequence, header, pssm = readPSSM(outname)
-    return pssmFiles
-
-def pssmFileWriteSequenceName(fileName, sequenceName, sequence):
-    f = open(fileName, 'r')
-    lines = f.read().splitlines()
-    f.close()
-    lines[0] = sequenceName
-    lines[1] = sequence
-    f = open(fileName, 'w')
-    f.write('\n'.join(lines))
-    f.close()
 
 def readRr(rrFile):
     rr2dMap = dict()
     f = open(rrFile, 'r')
-    sequence = next(f)
+    sequence = next(f)[:-1]
 
-    j = len(sequence)
-    i = j - 6
+    i = 1
     while i <= len(sequence) - 6:
         j = i + 6
         while j <= len(sequence):
@@ -67,30 +44,6 @@ def readRr(rrFile):
             rrList.append((i, j, rr2dMap[i][j]))
     return sequence, rrList
 
-def readPSSM(inFile):
-    count = 0
-    headerList = []
-    PSSM = {}
-    inputFile = open(inFile,"r")
-    seqname = next(inputFile)[1:]
-    sequence = next(inputFile)
-    for line in inputFile:
-        line = line.lstrip()
-        if (count == 0):
-            headerList = line.split()[:20]
-            count = count + 1
-        
-        elif not line.strip():
-            break
-
-        else:
-            tempList = []
-            tempList = line.split()[:22]
-            featureList = tempList[1:len(tempList)]
-            PSSM[tempList[0]] = featureList
-                
-    return seqname, sequence, headerList, PSSM
-
 def slidingWindow(inMatrix, windowSize):
     pssmMatrix = list()
 
@@ -101,7 +54,7 @@ def slidingWindow(inMatrix, windowSize):
 
     addList = []
 
-    for index in range(0,21):
+    for index in range(0,20):
         addList.append(-1)
 
     keyList = inMatrix.keys()
@@ -111,34 +64,45 @@ def slidingWindow(inMatrix, windowSize):
     keyRange = range(1, len(keyList) + 1)
 
     for index in keyRange:
-        pssmEntry = ((inMatrix[str(index - 1)][1:21] if str(index - 1) in inMatrix else addList[1:]) +
-                    (inMatrix[str(index - 2)][1:21] if str(index - 2) in inMatrix else addList[1:]) +
-                    inMatrix[str(index)] +
-                    (inMatrix[str(index + 1)][1:21] if str(index + 1) in inMatrix else addList[1:]) +
-                    (inMatrix[str(index + 2)][1:21] if str(index + 2) in inMatrix else addList[1:]))
+        window = int((windowSize - 1) / 2)
+        pssmEntry = []
+        for i in range(0, window):
+            pssmEntry += inMatrix[str(index - window + i)][1:21] if str(index - window + i) in inMatrix else addList
+        pssmEntry += inMatrix[str(index)][1:21]
+        for i in range(1, window + 1):
+            pssmEntry += inMatrix[str(index + i)][1:21] if str(index + i) in inMatrix else addList
         pssmMatrix.append(pssmEntry)
 
     return pssmMatrix
 
-def getInstances(pssmFiles, rrFiles):
+def getDataset(pssmFiles, rrFiles):
     pssmsMap = dict()
     rrSequencesList = list()
     for pssmFile in pssmFiles:
-        sequenceName, sequence, pssmHeader, pssmSequence = readPSSM(pssmFile)
-        pssmsMap[sequence] = slidingWindow(pssmSeqeunce, 5)
+        sequenceName, sequence, pssmHeader, pssmSequence = util.readPSSM(pssmFile)
+        pssmsMap[sequence] = slidingWindow(pssmSequence, 5)
 
     for rr in rrFiles:
         sequence, rrList = readRr(rr)
-        rrSequencesList.append((seqeunce, rrList))
+        rrSequencesList.append((sequence, rrList))
 
     instances = list()
     for rrInfo in rrSequencesList:
         sequence = rrInfo[0]
-        rrList = rrInfo[1]
-        i = rrList[0]
-        j = rrList[1]
-        label = rrList[3]
-        instances.append((i, j, pssmsMap[sequence], label))
+        pairContactInfoTuples = rrInfo[1]
+        instances.extend(getProteinInstances(pssmsMap[sequence], pairContactInfoTuples))
+
+    return instances
+
+def getProteinInstances(proteinPssm, contactTuples):
+    instances = list()
+    for contactTuple in contactTuples:
+        i = contactTuple[0]
+        j = contactTuple[1]
+        features = list(proteinPssm[int(i) - 1])
+        features.extend(list(proteinPssm[int(j) - 1]))
+        label = contactTuple[2]
+        instances.append((i, j, features, label))
 
     return instances
 

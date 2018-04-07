@@ -21,6 +21,53 @@ def decodeFastaformat(fastaStream):
         output.append((proteinName, proteinLine))
     return output
 
+def generatePSSM(multifastaFile, outfileDir, blastpgp, nrdb):
+    fastaSequences = decodeFastaformat(open(multifastaFile, 'r'))
+    pssmFiles = list()
+    aminoAcidCount = 0
+    for ind, seq in enumerate(fastaSequences):
+        outname = os.path.join(outfileDir, seq[0] + '.pssm')
+        process = subprocess.Popen([blastpgp, '-d', nrdb, '-j 3', '-b 1', '-a 4', '-Q', outname], stdout=subprocess.PIPE, stdin=subprocess.PIPE)
+        result = process.communicate(input=seq[1])
+        pssmFiles.append(outname)
+        pssmFileWriteSequenceName(outname, seq[0], seq[1])
+        sequenceName, sequence, header, pssm = readPSSM(outname)
+    return pssmFiles
+
+def pssmFileWriteSequenceName(fileName, sequenceName, sequence):
+    f = open(fileName, 'r')
+    lines = f.read().splitlines()
+    f.close()
+    lines[0] = sequenceName
+    lines[1] = sequence
+    f = open(fileName, 'w')
+    f.write('\n'.join(lines))
+    f.close()
+
+def readPSSM(inFile):
+    count = 0
+    headerList = []
+    PSSM = {}
+    inputFile = open(inFile,"r")
+    seqname = next(inputFile)[:-1]
+    sequence = next(inputFile)[:-1]
+    for line in inputFile:
+        line = line.lstrip()
+        if (count == 0):
+            headerList = line.split()[:20]
+            count = count + 1
+        
+        elif not line.strip():
+            break
+
+        else:
+            tempList = []
+            tempList = line.split()[:22]
+            featureList = tempList[1:len(tempList)]
+            PSSM[tempList[0]] = featureList
+                
+    return seqname, sequence, headerList, PSSM
+
 def randomSplit(inList, rate):
     random.shuffle(inList)
     trainData = inList[:(int((len(inList)) * rate))]
@@ -37,20 +84,19 @@ def predict(instance, weights): #adjusts with or without bias
     i = 0 #iterator for instance
     j = 0 #iterator for weights
     temp = 0
-    
+
     if (len(instance) + 1) == len(weights): #weights contain bias
         temp += weights[j] #bias
-        j++
+        j += 1
         
     while (i < len(instance)):
         temp += instance[i] * weights[j]
-        i++
-        j++
+        i += 1
+        j += 1
     temp = -temp
     temp = 1 + math.exp(temp)
-    return = 1 / temp
-    
-    
+    return 1 / temp
+
 
 if __name__ == "__main__":
     pass
