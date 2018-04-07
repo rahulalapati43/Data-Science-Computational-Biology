@@ -1,5 +1,6 @@
 #!/usr/bin/python -uB
 import util
+import featureGeneration
 import argparse
 import sys
 import os
@@ -8,14 +9,14 @@ import cPickle
 def main(blastpgp, nrdb, fastaFiles, rrFiles, tempDir):
     pssmFiles = list()
     for multifasta in fastaFiles:
-        pssmFiles.extend(util.generatePSSM(multifasta, tempDir, blastpgp, nrdb)
+        pssmFiles.extend(featureGeneration.generatePSSM(multifasta, tempDir, blastpgp, nrdb))
+
     generateModel(pssmFiles, rrFiles)
 
 def generateModel(pssmFiles, rrFiles):
     featureMatricies = list()
-    for pssmFile in pssmFiles:
-        sequenceName, pssmHeader, pssmSequence = util.readPSSM(pssmFile)
-        featureMatricies.append((sequenceName, util.slidingWindow(pssmSequence)))
+
+    instances = featureGeneration.getInstances(pssmFiles, rrFiles)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Generate trained model based on fasta and rr (contact map) files') 
