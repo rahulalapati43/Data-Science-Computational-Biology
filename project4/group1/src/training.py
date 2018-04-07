@@ -5,19 +5,24 @@ import argparse
 import sys
 import os
 import cPickle
+import gradientAscent as ga
+from gradientAscent import gradientAscent
+from gradientAscent import *
 
-def main(blastpgp, nrdb, fastaFiles, rrFiles, tempDir):
-    pssmFiles = list()
-    for multifasta in fastaFiles:
-        pssmFiles.extend(util.generatePSSM(multifasta, tempDir, blastpgp, nrdb))
+def main(pssmFiles, rrFiles):
+    trainRr, testRr = util.randomSplit(rrFiles, 0.75)
+    print trainRr
 
-    generateModel(pssmFiles, rrFiles)
+    instances = featureGeneration.getDataset(pssmFiles, trainRr)
+    print 'Length of dataset: {0}'.format(len(instances))
 
-def generateModel(pssmFiles, rrFiles):
-    featureMatricies = list()
+    epsilon = 0.05
+    weights = gradientAscent(epsilon, 
+            ga.learningRate,
+            ga.predict, ga.getDeltaMCLE, ga.getSubsetBatch, 
+            instances)
 
-    instances = featureGeneration.getDataset(pssmFiles, rrFiles)
-    print instances
+    print weights
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Generate trained model based on fasta and rr (contact map) files') 
@@ -29,7 +34,4 @@ if __name__ == "__main__":
     parser.add_argument('--pssms', help='Get PSSM files from here instead of generating from fasta', nargs='+', required=True)
     args = parser.parse_args()
 
-    if args.pssms is not None:
-        generateModel(args.pssms, args.rr)
-    else:
-        main(args.blast_path, args.nrdb, args.fasta, args.rr, args.temp_dir)
+    main(args.pssms, args.rr)
