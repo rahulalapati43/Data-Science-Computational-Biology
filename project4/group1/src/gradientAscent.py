@@ -49,5 +49,10 @@ def predict(instance, weights): #adjusts with or without bias
     temp = 1 + math.exp(temp)
     return 1 / temp
 
+def learningRate(iterationCount, delta)
+    n = (8/2**(float(iterationCount)/512) + 1)/10 # exponential slope that goes from 0.9 to 0.1 over about 2500 iterations 
+    return n
+    
+
 if __name__ == "__main__":
     pass
