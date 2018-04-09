@@ -67,10 +67,10 @@ def slidingWindow(inMatrix, windowSize):
         window = int((windowSize - 1) / 2)
         pssmEntry = []
         for i in range(0, window):
-            pssmEntry += inMatrix[str(index - window + i)][1:21] if str(index - window + i) in inMatrix else addList
-        pssmEntry += inMatrix[str(index)][1:21]
+            pssmEntry += map(int, inMatrix[str(index - window + i)][1:21]) if str(index - window + i) in inMatrix else addList
+        pssmEntry += map(int, inMatrix[str(index)][1:21])
         for i in range(1, window + 1):
-            pssmEntry += inMatrix[str(index + i)][1:21] if str(index + i) in inMatrix else addList
+            pssmEntry += map(int, inMatrix[str(index + i)][1:21]) if str(index + i) in inMatrix else addList
         pssmMatrix.append(pssmEntry)
 
     return pssmMatrix

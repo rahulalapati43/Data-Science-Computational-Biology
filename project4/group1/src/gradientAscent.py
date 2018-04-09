@@ -1,28 +1,34 @@
 #!/usr/bin/python -uB
 import util
 import random
+import math
 
 def gradientAscent(learningRateCallback, epsilon, predictCallback, getDeltaCallback, getSubsetCallback, dataset):
     recentDeltas = list()
+    previousDelta = None
     weights = [0] * 200
 
     iterationCount = 0
     while len(recentDeltas) < 10:
-        data = getSubset(dataset)
+        data = getSubsetCallback(dataset)
         deltas = list()
         for d in data:
             i, j, features, label = d
-            prediction = predict(features, weights)
-            delta = getDelta(prediction, learningRateCallback(iterationCount, delta), d, weights)
-            deltas.add(delta)
+            prediction = predictCallback(features, weights)
+            etta = learningRateCallback(iterationCount, previousDelta)
+            delta = getDeltaCallback(prediction, etta, d, weights)
+            deltas.append(delta)
 
-        colsum = columnSum(deltas)
+        colsum = util.columnSum(deltas)
+        previousDelta = colsum
         if max(colsum) > epsilon:
-            recentDdeltas = []
+            recentDeltas = []
         else:
             recentDeltas.add(max(colsum))
 
         weights += colsum
+        print 'iteration #{0}: delta was {1}'.format(iterationCount, colsum)
+        iterationCount += 1
 
     return weights
 
@@ -49,10 +55,30 @@ def predict(instance, weights): #adjusts with or without bias
     temp = 1 + math.exp(temp)
     return 1 / temp
 
-def learningRate(iterationCount, delta)
+def learningRate(iterationCount, delta):
     n = (8/2**(float(iterationCount)/512) + 1)/10 # exponential slope that goes from 0.9 to 0.1 over about 2500 iterations 
     return n
-    
+ 
+def getDeltaMAP(prediction, learningRate, instance, weights):
+    lambdaa = 0.25
+    i = 0 #iterator for features
+    features = instance[2]
+    y = instance[3]
+    weightedErrorSum = 0
+    for feature in features:
+        weightedErrorSum += feature * (y - prediction)
+    delta = learningRate * weightedErrorSum - learningRate * lambdaa * weights
+    return delta
+
+def getDeltaMCLE(prediction, learningRate, instance, weight):
+    i = 0 #iterator for features
+    features = instance[2]
+    y = instance[-1]
+    weightErrors = list()
+    temp = 0
+    for feature in features:
+        temp += feature * (y - prediction)
+    return learningRate * temp
 
 if __name__ == "__main__":
     pass
