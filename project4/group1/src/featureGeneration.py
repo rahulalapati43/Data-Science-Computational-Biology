@@ -17,9 +17,8 @@ def readRr(rrFile):
     i = 1
     while i <= len(sequence) - 6:
         j = i + 6
+        rr2dMap[str(i)] = dict()
         while j <= len(sequence):
-            if str(i) not in rr2dMap:
-                rr2dMap[str(i)] = dict()
             rr2dMap[str(i)][str(j)] = 0
             j += 1
         i += 1
@@ -47,20 +46,12 @@ def readRr(rrFile):
 def slidingWindow(inMatrix, windowSize):
     pssmMatrix = list()
 
-    keyList = inMatrix.keys()
-    keyListInt = map(int, keyList)
-    minKeyList = min(keyListInt)
-    maxKeyList = max(keyListInt)
-
     addList = []
-
     for index in range(0,20):
         addList.append(-1)
 
     keyList = inMatrix.keys()
     keyListInt = map(int, keyList)
-    minKeyList = min(keyListInt)
-    maxKeyList = max(keyListInt)
     keyRange = range(1, len(keyList) + 1)
 
     for index in keyRange:

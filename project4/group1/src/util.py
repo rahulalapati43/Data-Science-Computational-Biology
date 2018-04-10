@@ -31,7 +31,6 @@ def generatePSSM(multifastaFile, outfileDir, blastpgp, nrdb):
         result = process.communicate(input=seq[1])
         pssmFiles.append(outname)
         pssmFileWriteSequenceName(outname, seq[0], seq[1])
-        sequenceName, sequence, header, pssm = readPSSM(outname)
     return pssmFiles
 
 def pssmFileWriteSequenceName(fileName, sequenceName, sequence):
