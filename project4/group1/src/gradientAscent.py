@@ -5,29 +5,30 @@ import math
 
 def gradientAscent(learningRateCallback, epsilon, predictCallback, getDeltaCallback, getSubsetCallback, dataset):
     recentDeltas = list()
-    previousDelta = None
-    weights = [0] * 200
+    weights = [0] * 201
 
     iterationCount = 0
     while len(recentDeltas) < 10:
         data = getSubsetCallback(dataset)
         deltas = list()
+        etta = learningRateCallback(iterationCount)
         for d in data:
             i, j, features, label = d
+	    print features
+	    print "weights" + str(iterationCount) + "=============== " + str(etta)
+            print weights
             prediction = predictCallback(features, weights)
-            etta = learningRateCallback(iterationCount, previousDelta)
             delta = getDeltaCallback(prediction, etta, d, weights)
             deltas.append(delta)
 
         colsum = util.columnSum(deltas)
-        previousDelta = colsum
         if max(colsum) > epsilon:
             recentDeltas = []
         else:
             recentDeltas.add(max(colsum))
 
-        weights += colsum
-        print 'iteration #{0}: delta was {1}'.format(iterationCount, colsum)
+        weights = map(sum, zip(*[weights, colsum]))
+     #   print 'iteration #{0}: delta was {1}'.format(iterationCount, colsum)
         iterationCount += 1
 
     return weights
@@ -51,11 +52,11 @@ def predict(instance, weights): #adjusts with or without bias
         temp += instance[i] * weights[j]
         i += 1
         j += 1
-    temp = -temp
+    
     temp = 1 + math.exp(temp)
     return 1 / temp
 
-def learningRate(iterationCount, delta):
+def learningRate(iterationCount):
     n = (8/2**(float(iterationCount)/512) + 1)/10 # exponential slope that goes from 0.9 to 0.1 over about 2500 iterations 
     return n
  
@@ -75,10 +76,11 @@ def getDeltaMCLE(prediction, learningRate, instance, weight):
     features = instance[2]
     y = instance[-1]
     weightErrors = list()
-    temp = 0
+    w0Error = learningRate * 1 * (y - prediction)
+    weightErrors.append(w0Error)
     for feature in features:
-        temp += feature * (y - prediction)
-    return learningRate * temp
+        weightErrors.append(learningRate * feature * (y - prediction))
+    return weightErrors
 
 if __name__ == "__main__":
     pass

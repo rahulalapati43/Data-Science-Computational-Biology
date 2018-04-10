@@ -6,20 +6,18 @@ import sys
 import os
 import cPickle
 import gradientAscent as ga
-from gradientAscent import gradientAscent
 
 def main(pssmFiles, rrFiles):
     trainRr, testRr = util.randomSplit(rrFiles, 0.75)
     print trainRr
+    print testRr
 
     instances = featureGeneration.getDataset(pssmFiles, trainRr)
     print 'Length of dataset: {0}'.format(len(instances))
 
     epsilon = 0.05
-    weights = gradientAscent(ga.learningRate, epsilon,
-            ga.predict, ga.getDeltaMCLE, ga.getSubsetBatch, 
-            instances)
-
+    #Batch gradient ascent using MCLE 
+    weights = ga.gradientAscent(ga.learningRate, epsilon, ga.predict, ga.getDeltaMCLE, ga.getSubsetBatch, instances)
     print weights
 
 if __name__ == "__main__":
