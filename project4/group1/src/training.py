@@ -9,7 +9,7 @@ import gradientAscent as ga
 from gradientAscent import gradientAscent
 
 def main(pssmFiles, rrFiles):
-    trainRr, testRr = util.randomSplit(rrFiles, 0.15)
+    trainRr, testRr = util.randomSplit(rrFiles, 0.75)
     print trainRr
 
     instances = featureGeneration.getDataset(pssmFiles, trainRr)
