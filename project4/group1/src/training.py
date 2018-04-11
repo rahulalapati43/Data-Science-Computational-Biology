@@ -17,7 +17,7 @@ def main(pssmFiles, rrFiles):
 
     epsilon = 0.05
     #Batch gradient ascent using MCLE 
-    weights = ga.gradientAscent(ga.learningRate, epsilon, ga.predict, ga.getDeltaMCLE, ga.getSubsetBatch, instances)
+    weights = ga.gradientAscent(ga.learningRate, epsilon, ga.predict, ga.getDeltaMCLE, ga.getSubsetStochastic, instances)
     print weights
 
 if __name__ == "__main__":

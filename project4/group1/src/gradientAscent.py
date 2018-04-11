@@ -14,9 +14,6 @@ def gradientAscent(learningRateCallback, epsilon, predictCallback, getDeltaCallb
         etta = learningRateCallback(iterationCount)
         for d in data:
             i, j, features, label = d
-	    print features
-	    print "weights" + str(iterationCount) + "=============== " + str(etta)
-            print weights
             prediction = predictCallback(features, weights)
             delta = getDeltaCallback(prediction, etta, d, weights)
             deltas.append(delta)
@@ -25,10 +22,10 @@ def gradientAscent(learningRateCallback, epsilon, predictCallback, getDeltaCallb
         if max(colsum) > epsilon:
             recentDeltas = []
         else:
-            recentDeltas.add(max(colsum))
+            recentDeltas.append(max(colsum))
 
         weights = map(sum, zip(*[weights, colsum]))
-     #   print 'iteration #{0}: delta was {1}'.format(iterationCount, colsum)
+        print 'iteration #{0}: delta was {1}'.format(iterationCount, colsum)
         iterationCount += 1
 
     return weights
@@ -37,7 +34,7 @@ def getSubsetBatch(dataset):
     return dataset
 
 def getSubsetStochastic(dataset):
-    return random.choice(dataset)
+    return [random.choice(dataset)]
 
 def predict(instance, weights): #adjusts with or without bias
     i = 0 #iterator for instance

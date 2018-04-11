@@ -71,7 +71,8 @@ def getDataset(pssmFiles, rrFiles):
     rrSequencesList = list()
     for pssmFile in pssmFiles:
         sequenceName, sequence, pssmHeader, pssmSequence = util.readPSSM(pssmFile)
-        pssmsMap[sequence] = slidingWindow(pssmSequence, 5)
+        pssmsMap[sequence] = [util.normalize(features) for features in slidingWindow(pssmSequence, 5)]
+        #pssmsMap[sequence] = slidingWindow(pssmSequence, 5)
 
     for rr in rrFiles:
         sequence, rrList = readRr(rr)

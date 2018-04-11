@@ -76,5 +76,12 @@ def randomSplit(inList, rate):
 def columnSum(listOfTuples):
     return [sum(x) for x in zip(*listOfTuples)]
 
+def normalize(features):
+    squares = map(lambda x: x*x, features)
+    squareSum = sum(squares)
+    norm = math.sqrt(squareSum)
+
+    return [feature / norm for feature in features]
+
 if __name__ == "__main__":
     pass
