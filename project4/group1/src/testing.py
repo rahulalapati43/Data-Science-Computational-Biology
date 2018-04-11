@@ -9,8 +9,7 @@ import math
 def main(pssmFiles, rrFiles):
     
     # read model
-    # weights = cPickle.load(open(Model, 'rb'))
-    weights = [1] * 201
+    weights = cPickle.load(open('weights.pickle', 'rb'))
     trainRr = rrFiles
     predictedLabel = list()
     correct =0 
@@ -22,16 +21,17 @@ def main(pssmFiles, rrFiles):
         predictedLabel.append(out)
         if out[2]==out[3]:
             correct = (correct+1)
+    print predictedLabel
     accuracy = float(correct*100)/len(instances)
     print "accuracy =" + str(accuracy)
 
 def prediction(weights,x):
     sum = 0 
     for i in xrange(len(x)):
-        sum += weights[i] * x[i] 
-    sum += weights[200]
+        sum += weights[i+1] * x[i] 
+    sum += weights[0]
     expo = math.exp(sum)
-    output = 0 if expo<=0 else 1
+    output = 0 if expo>=1 else 1
     return output
 
 
