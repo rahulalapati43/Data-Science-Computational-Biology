@@ -8,17 +8,21 @@ import gradientAscent as ga
 
 def main(pssmFiles, rrFiles):
     trainRr, testRr = util.randomSplit(rrFiles, 0.75)
-    print trainRr
-    print testRr
+    print 'train rr files ==================='
+    print ' '.join(trainRr)
+    print 'test rr files ===================='
+    print ' '.join(testRr)
 
     instances = featureGeneration.getDataset(pssmFiles, trainRr)
     print 'Length of dataset: {0}'.format(len(instances))
 
-    epsilon = 0.05
+    epsilon = 0.0005
     #Batch gradient ascent using MCLE 
-    weights = ga.gradientAscent(ga.learningRate, epsilon, ga.predict, ga.getDeltaMCLE, ga.getSubsetStochastic, instances)
+    weights = ga.gradientAscent(lambda x: 0.01, epsilon, ga.predict, ga.getDeltaMCLE, ga.getSubsetStochastic, instances)
+
+    print '============================= weights ====================================='
     print weights
-    cPickle.dump(weights, open('weights.pickle', 'wb'))
+    cPickle.dump(weights, open('weights_training.pickle', 'wb'))
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Generate trained model based on fasta and rr (contact map) files') 
