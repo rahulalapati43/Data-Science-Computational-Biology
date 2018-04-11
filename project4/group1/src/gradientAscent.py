@@ -51,11 +51,15 @@ def predict(instance, weights): #adjusts with or without bias
         i += 1
         j += 1
     
+    # temp=-temp
     temp = 1 + math.exp(temp)
     return 1 / temp
 
 def learningRate(iterationCount):
-    n = (8/2**(float(iterationCount)/512) + 1)/10 # exponential slope that goes from 0.9 to 0.1 over about 2500 iterations 
+    if iterationCount < 40000:
+        n = (8/2**(float(iterationCount)/512) + 1)/10 # exponential slope that goes from 0.9 to 0.1 over about 2500 iterations 
+    else:
+        n = 0.1
     return n
  
 def getDeltaMAP(prediction, learningRate, instance, weights):

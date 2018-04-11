@@ -14,7 +14,7 @@ def main(pssmFiles, rrFiles):
     instances = featureGeneration.getDataset(pssmFiles, trainRr)
     print 'Length of dataset: {0}'.format(len(instances))
 
-    epsilon = 0.05
+    epsilon = 0.005
     #Batch gradient ascent using MCLE 
     weights = ga.gradientAscent(ga.learningRate, epsilon, ga.predict, ga.getDeltaMCLE, ga.getSubsetStochastic, instances)
     print weights
