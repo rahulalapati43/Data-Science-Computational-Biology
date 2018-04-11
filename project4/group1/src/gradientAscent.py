@@ -47,7 +47,7 @@ def predict(instance, weights):  # adjusts with or without bias
         i += 1
         j += 1
 
-    return float(1) / float(1 + math.exp(temp))
+    return float(1) / float(1 + math.exp(-temp))
 
 def getDeltaMCLE(prediction, learningRate, instance, weight):
     i = 0  # iterator for features
