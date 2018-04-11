@@ -2,7 +2,6 @@
 import util
 import featureGeneration
 import argparse
-import sys
 import os
 import cPickle
 import gradientAscent as ga
@@ -19,6 +18,7 @@ def main(pssmFiles, rrFiles):
     #Batch gradient ascent using MCLE 
     weights = ga.gradientAscent(ga.learningRate, epsilon, ga.predict, ga.getDeltaMCLE, ga.getSubsetStochastic, instances)
     print weights
+    cPickle.dump(weights, open('weights.pickle', 'wb'))
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Generate trained model based on fasta and rr (contact map) files') 

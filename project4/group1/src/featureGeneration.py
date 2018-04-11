@@ -71,8 +71,7 @@ def getDataset(pssmFiles, rrFiles):
     rrSequencesList = list()
     for pssmFile in pssmFiles:
         sequenceName, sequence, pssmHeader, pssmSequence = util.readPSSM(pssmFile)
-        pssmsMap[sequence] = [util.normalize(features) for features in slidingWindow(pssmSequence, 5)]
-        #pssmsMap[sequence] = slidingWindow(pssmSequence, 5)
+        pssmsMap[sequence] = slidingWindow(pssmSequence, 5)
 
     for rr in rrFiles:
         sequence, rrList = readRr(rr)
@@ -94,7 +93,7 @@ def getProteinInstances(proteinPssm, contactTuples):
         features = list(proteinPssm[int(i) - 1])
         features.extend(list(proteinPssm[int(j) - 1]))
         label = contactTuple[2]
-        instances.append((i, j, features, label))
+        instances.append((i, j, util.normalize(features), label))
 
     return instances
 
