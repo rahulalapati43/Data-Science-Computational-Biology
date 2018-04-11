@@ -1,6 +1,7 @@
 #!/usr/bin/python -uB
 import featureGeneration
 import argparse
+import gradientAscent
 import sys
 import os
 import cPickle
@@ -17,7 +18,7 @@ def main(pssmFiles, rrFiles):
     print 'Length of dataset: {0}'.format(len(instances))
     for instance in instances:
         out = [instance[0],instance[1],instance[3]]
-        out.append(prediction(weights,instance[2]))
+        out.append(1 if gradientAscent.predict(instance[2], weights) >= 0.5 else 0)
         predictedLabel.append(out)
         if out[2]==out[3]:
             correct = (correct+1)
