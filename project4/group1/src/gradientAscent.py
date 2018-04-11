@@ -19,10 +19,11 @@ def gradientAscent(learningRateCallback, epsilon, predictCallback, getDeltaCallb
             deltas.append(delta)
 
         colsum = util.columnSum(deltas)
-        if max(colsum) > epsilon:
+        maxColusum = max([abs(col) for col in colsum])
+        if maxColusum > epsilon:
             recentDeltas = []
         else:
-            recentDeltas.append(max(colsum))
+            recentDeltas.append(maxColusum)
 
         weights = map(sum, zip(*[weights, colsum]))
         print 'iteration #{0}: delta was {1}'.format(iterationCount, colsum)
