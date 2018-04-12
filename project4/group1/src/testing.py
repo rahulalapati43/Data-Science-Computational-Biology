@@ -28,14 +28,20 @@ def main(pssmFiles, rrFiles, pickle):
         Fname = testRr[x].split("/")[3]
         results.append(calculateForRR(instances,weights,l,Fname))
     
-    sumResults = [0,0,0]
-    print "Protein \t\tL10 \t\t\t\tL5 \t\t\t\tL2"
+    sumResults = [0,0,0,0,0]
+    print "Protein \t\tL10 \t\t\t\tL5 \t\t\t\tL2 \t\t\t\tTP \t\t\tFP"
     for result in results:
         sumResults[0] += result[1]
         sumResults[1] += result[2]
         sumResults[2] += result[3]
-        print result[0] + "\t\t\t" + str(result[1])+ "\t\t\t" + str(result[2])+ "\t\t\t" + str(result[3])
-    
+        sumResults[3] += result[4]
+        sumResults[4] += result[5]
+        print result[0] + "\t\t\t" + str(result[1])+ "\t\t\t" + str(result[2])+ "\t\t\t" + str(result[3])+ "\t\t\t" + str(result[4])+ "\t\t\t" + str(result[5])
+
+    if (sumResults[3]+sumResults[4])!=0:
+        accuracyOnes = sumResults[3]/(sumResults[3]+sumResults[4])
+    else:
+        accuracyOnes = 0
     avgL10 = sumResults[0]/len(results)
     avgL5 = sumResults[1]/len(results)
     avgL2 = sumResults[2]/len(results)
@@ -44,7 +50,7 @@ def main(pssmFiles, rrFiles, pickle):
     print "Average L/10 = " + str(avgL10)
     print "Average L/5 = " + str(avgL5)
     print "Average L/2 = " + str(avgL2)
-
+    print "Average accuracy positive contacts = " + str(accuracyOnes)
 def calculateForRR(instances,weights,l,protienName):
     predictedLabel = list()
     
@@ -64,12 +70,19 @@ def calculateForRR(instances,weights,l,protienName):
     # print predictedLabel
 
     #l = len(predictedLabel)
-  
+    TP = 0
+    FP = 0
+    for label in predictedLabel:
+        if(label[3]==1):
+            if label[2]==1:
+                TP+=1
+            else:
+                FP+=1
 
     L10 = accuracy(l/10,predictedLabel)
     L5 = accuracy(l/5,predictedLabel)
     L2 = accuracy(l/2,predictedLabel)
-    return (protienName,L10,L5,L2)
+    return (protienName,L10,L5,L2,TP,FP)
 
 def accuracy(l,predictedLabel):
     correct =0
