@@ -9,7 +9,6 @@ import random
 from functools import partial
 
 def main(pssmFiles, rrFiles, minibatchSize):
-    '''
     trainingRrFiles, testRr = util.randomSplit(rrFiles, 0.75)
     pssmsMap = featureGeneration.pssmsMap(pssmFiles)
     instances = list()
@@ -17,9 +16,10 @@ def main(pssmFiles, rrFiles, minibatchSize):
         print 'Balancing protein sequence #{0} from file {1}'.format(i + 1, rrFile)
         instances.extend(classBalance(featureGeneration.getDataset(pssmsMap, [rrFile])))
     print 'Length of dataset: {0}'.format(len(instances))
-    cPickle.dump((trainingRrFiles, testRr, instances), open('training.pickle', 'wb'))
-    '''
-    (trainingRrFiles, testRr, instances) = cPickle.load(open('training.pickle', 'rb'))
+
+    #cPickle.dump((trainingRrFiles, testRr, instances), open('training.pickle', 'wb'))
+    #(trainingRrFiles, testRr, instances) = cPickle.load(open('training.pickle', 'rb'))
+
     print 'train rr files ==================='
     print ' '.join(trainingRrFiles)
     print 'test rr files ===================='

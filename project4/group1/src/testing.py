@@ -29,7 +29,7 @@ def main(pssmFiles, rrFiles, pickle):
         results.append(calculateForRR(instances,weights,l,Fname))
     
     sumResults = [0,0,0,0,0,0,0]
-    print "Protein \tL10 \t\t\t\tL5  \t\t\t\tL2 \t\t\t\t\t\t\tTP \t\t\tTN \t\t\tFP \t\t\tFN"
+    print "Protein \tL10 \t\t\tL5  \t\t\tL2 \t\t\t\t\tTP \t\tTN \t\tFP \t\tFN"
     for result in results:
         for x in xrange(0,7):
             sumResults[x] += result[x+1]
