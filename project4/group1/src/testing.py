@@ -19,8 +19,8 @@ def main(pssmFiles, rrFiles, pickle):
 
     testRr = rrFiles
     results = list()
-    for x in xrange(0,len(pssmFiles)):
-        instances = featureGeneration.getDataset([pssmFiles[x]], [testRr[x]])
+    for x in xrange(0,len(rrFiles)):
+        instances = featureGeneration.getDataset(featureGeneration.pssmsMap(pssmFiles), [testRr[x]])
         f = open(testRr[x], 'r')
         sequence = next(f)[:-1]
         f.close()
@@ -29,11 +29,11 @@ def main(pssmFiles, rrFiles, pickle):
         results.append(calculateForRR(instances,weights,l,Fname))
     
     sumResults = [0,0,0,0,0,0,0]
-    print "Protein \tL10 \t\t\tL5 \t\t\tL2 \t\t\tTP \t\tTN \t\tFP \t\tFN"
+    print "Protein \tL10 \t\t\t\tL5  \t\t\t\tL2 \t\t\t\t\t\t\tTP \t\t\tTN \t\t\tFP \t\t\tFN"
     for result in results:
         for x in xrange(0,7):
             sumResults[x] += result[x+1]
-        print result[0] + "\t\t" + str(result[1])+ " %\t\t" + str(result[2])+ " %\t\t" + str(result[3])+ " %\t\t" + str(result[4])+ "\t\t" + str(result[5])+ "\t\t" + str(result[6])+ "\t\t" + str(result[7])
+        print result[0] + "\t\t" + str(result[1]).ljust(13) + " %\t\t" + str(result[2]).ljust(13) + " %\t\t" + str(result[3]).ljust(13) + " %\t\t\t\t" + str(result[4]).ljust(5) + "\t\t" + str(result[5]).ljust(5) + "\t\t" + str(result[6]).ljust(5) + "\t\t" + str(result[7]).ljust(5)
 
     if (sumResults[4]+sumResults[6])!=0:
         accuracyZero = float(sumResults[4])*100/(sumResults[4]+sumResults[6])
@@ -91,7 +91,6 @@ def calculateForRR(instances,weights,l,protienName):
                 TN+=1
             else:
                 FP+=1
-
     L10 = accuracy(l/10,predictedLabel)
     L5 = accuracy(l/5,predictedLabel)
     L2 = accuracy(l/2,predictedLabel)
@@ -125,5 +124,4 @@ if __name__ == "__main__":
     parser.add_argument('--pssms', help='Get PSSM files from here instead of generating from fasta', nargs='+', required=True)
     parser.add_argument('--pkl', help='Use this pickle model', required=True)
     args = parser.parse_args()
-
     main(args.pssms, args.rr, args.pkl)
