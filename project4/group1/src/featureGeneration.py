@@ -66,12 +66,16 @@ def slidingWindow(inMatrix, windowSize):
 
     return pssmMatrix
 
-def getDataset(pssmFiles, rrFiles):
+def pssmsMap(pssmFiles):
     pssmsMap = dict()
-    rrSequencesList = list()
     for pssmFile in pssmFiles:
         sequenceName, sequence, pssmHeader, pssmSequence = util.readPSSM(pssmFile)
         pssmsMap[sequence] = slidingWindow(pssmSequence, 5)
+
+    return pssmsMap
+
+def getDataset(pssmsMap, rrFiles):
+    rrSequencesList = list()
 
     for rr in rrFiles:
         sequence, rrList = readRr(rr)

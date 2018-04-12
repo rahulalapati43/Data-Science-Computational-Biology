@@ -11,7 +11,7 @@ def gradientAscent(learningRateCallback, epsilon, predictCallback, getDeltaCallb
     while len(recentDeltas) < 10:
         data = getSubsetCallback(dataset)
         deltas = list()
-        etta = learningRateCallback(iterationCount)
+        etta = learningRateCallback(iterationCount, epsilon)
         for d in data:
             i, j, features, label = d
             prediction = predictCallback(features, weights)
@@ -19,6 +19,7 @@ def gradientAscent(learningRateCallback, epsilon, predictCallback, getDeltaCallb
             deltas.append(delta)
 
         colsum = [float(colDelta / len(data)) for colDelta in util.columnSum(deltas)]
+        #colsum = util.columnSum(deltas)
         maxColusum = max([abs(col) for col in colsum])
         if maxColusum > epsilon:
             recentDeltas = []
@@ -26,7 +27,7 @@ def gradientAscent(learningRateCallback, epsilon, predictCallback, getDeltaCallb
             recentDeltas.append(maxColusum)
 
         weights = map(sum, zip(*[weights, colsum]))
-        print 'iteration #{0}: delta was {1}'.format(iterationCount, colsum)
+        print 'iteration #{0}: max delta: {1} ==== learning rate was {2}'.format(iterationCount, maxColusum, etta)
         iterationCount += 1
 
     print '================ recent {0} deltas ================'.format(len(recentDeltas))
@@ -54,11 +55,9 @@ def getDeltaMCLE(prediction, learningRate, instance, weight):
     features = instance[2]
     y = instance[-1]
     weightErrors = list()
-    #w0Error = learningRate * 1 * (y - prediction) * prediction * (1 - prediction)
     w0Error = learningRate * 1 * (y - prediction)
     weightErrors.append(w0Error)
     for feature in features:
-        #weightErrors.append(learningRate * feature * (y - prediction) * prediction * (1 - prediction))
         weightErrors.append(learningRate * feature * (y - prediction))
     return weightErrors
 
@@ -73,12 +72,16 @@ def getDeltaMAP(prediction, learningRate, instance, weights):
     delta = learningRate * weightedErrorSum - learningRate * lambdaa * weights
     return delta
 
-def learningRate(iterationCount):
-    n = (8/2**(float(iterationCount)/512) + 1)/10 # exponential slope that goes from 0.9 to 0.1 over about 2500 iterations
+def learningRate(iterationCount, epsilon):
+    n = (8/2**(float(iterationCount)/512) + 1)*(epsilon * 10) # exponential slope that goes from 0.009 to 0.005 over about 2500 iterations
     return n
 
 def getSubsetBatch(dataset):
     return dataset
+
+def getSubsetMiniBatch(batchSize, dataset):
+    random.shuffle(dataset)
+    return dataset[:batchSize]
 
 def getSubsetStochastic(dataset):
     return [random.choice(dataset)]
