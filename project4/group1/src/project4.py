@@ -6,11 +6,9 @@ import cPickle
 import gradientAscent
 import featureGeneration
 
-def main(blastpgp, nrdb, fastaFile):
-    weights = cPickle.load(open(os.path.join(os.path.dirname(__file__), 'weights_minibatch.pickle')))
+def main(blastpgp, nrdb, model, fastaFile):
+    weights = cPickle.load(open(model))
     pssmFiles = util.generatePSSM(fastaFile, './', blastpgp, nrdb)
-    #pssmFiles = ['./1guu.pssm']
-
 
     fastaList = util.decodeFastaformat(open(fastaFile, 'r'))
     proteinName, proteinSequence = fastaList[0]
@@ -49,7 +47,7 @@ def getContactPairs(sequence, pssmsMap):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) < 4:
-        print "Usage: " + sys.argv[0] + " /path/to/blastpgp /path/to/nrdb/file FASTA_file"
+    if len(sys.argv) < 5:
+        print "Usage: " + sys.argv[0] + " /path/to/blastpgp /path/to/nrdb/file model.pickle FASTA_file"
     else:
-        main(sys.argv[1], sys.argv[2], sys.argv[3])
+        main(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
