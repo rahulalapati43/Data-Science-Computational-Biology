@@ -25,19 +25,22 @@ def main(blastpgp, nrdb, tmalign, dataDir):
         proteinName = re.match('^(?:.*/)?(.+)\.pssm$', pssm).group(1)
         proteins[proteinName].setPssmFile(pssm)
 
+    pssmMap = util.pssmsMap(proteins,pssmFiles)
+
     for proteinName in proteins:
-        print 'Protein {0} has sequence {1}'.format(proteinName, proteins[proteinName].getSequence())
+        proteins[proteinName].setExposedBuriedAvgs()
+        proteins[proteinName].setHECAvgs()
 
-def pssmsMap(pssmFiles):
-    pssmsMap = dict()
-    for pssmFile in pssmFiles:
-        sequenceName, sequence, pssmHeader, pssmSequence = util.readPSSM(pssmFile)
-        pssmsMap[sequence] = slidingWindow(pssmSequence, 5)
+    for proteinName in proteins:
+        print '\n\nProtein {0} has sequence {1}'.format(proteinName, proteins[proteinName].getSequence())
+        print 'Protein {0} has PssmAvgs {1}'.format(proteinName, proteins[proteinName].getPssmAvgs())
+        print 'Protein {0} has ExposedBurredAvgs {1}'.format(proteinName, proteins[proteinName].getExposedBuriedAvgs())
+        print 'Protein {0} has HECAvgs {1}'.format(proteinName, proteins[proteinName].getHECAvgs())
 
-    return pssmsMap
 
 if __name__ == "__main__":
     if len(sys.argv) < 5:
         print "Usage: " + sys.argv[0] + "/path/to/blastpgp /path/to/nrdb/file /path/to/tmalign data_dir/"
     else:
         main(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
+
