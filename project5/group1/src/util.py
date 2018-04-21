@@ -1,8 +1,8 @@
 import random
+import re
 import os
 import subprocess
 import math
-from Protein import Protein
 
 def decodeFastaformat(fasta):
     fastaStream = open(fasta, 'rb')
@@ -35,6 +35,15 @@ def generatePSSM(multifastaFile, outfileDir, blastpgp, nrdb):
         pssmFiles.append(outname)
         pssmFileWriteSequenceName(outname, seq[0], seq[1])
     return pssmFiles
+
+def tmAlign(tmAlignProg, proteinA_pdb, proteinB_pdb):
+    process = subprocess.Popen([tmAlignProg, proteinA_pdb, proteinB_pdb], stdout=subprocess.PIPE)
+    result = process.communicate()
+    stdo = result[0]
+    lines = stdo.split('\n')
+    scoreLines = filter(lambda line: line.startswith("TM-score"), lines)
+    scores = map(lambda line: float(re.match('^TM-score=\s*([\d\.]*)\s', line).group(1)), scoreLines)
+    return scores
 
 def pssmFileWriteSequenceName(fileName, sequenceName, sequence):
     f = open(fileName, 'r')
@@ -89,7 +98,7 @@ def readPSSMNew(inFile):
         else:
             tempList = []
             tempList = line.split()[:42]
-            featureList = tempList[22:len(tempList)]
+            featureList = tempList[21:len(tempList)]
             PSSM[tempList[0]] = featureList
                 
     return seqname, sequence, headerList, PSSM
@@ -103,9 +112,9 @@ def randomSplit(inList, rate):
 def columnSum(listOfTuples):
     return [sum(x) for x in zip(*listOfTuples)]
 
-def NormColumnAvg(listOfTuples):
-    n = float(len(listOfTuples))*100
-    return [sum(x)/n for x in zip(*listOfTuples)]
+def columnAvg(listOfTuples, divisionFactor):
+    n = float(len(listOfTuples))
+    return [sum(x)/n/float(divisionFactor) for x in zip(*listOfTuples)]
 
 def normalize(features):
     squares = map(lambda x: x*x, features)
