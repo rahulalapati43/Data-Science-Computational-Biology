@@ -20,6 +20,25 @@ def main(tmalign, dataDir):
     print '\n\n\n{0} protein pairs found'.format(len(proteinPairs))
     print '{0} paired with {1} :::::::::: {2}'.format(pair[0].getProteinName(), pair[1].getProteinName(), pair[0].getTmScoreAvg(tmalign, pair[1]))
 
+def getDataset(proteinPairs, tmalign):
+    dataset = list()
+    for pair in proteinPairs:
+        proteinA = pair[0]
+        proteinB = pair[1]
+        featureSet = list(proteinA.getPssmAvgs())
+        featureSet.extend(proteinB.getPssmAvgs())
+        featureSet.extend(proteinA.getHECAvgs())
+        featureSet.extend(proteinB.getHECAvgs())
+        featureSet.extend(proteinA.getExposedBuriedAvgs())
+        featureSet.extend(proteinB.getExposedBuriedAvgs())
+        featureSet.append(proteinA.getTmScoreAvg(tmalign, proteinB))
+
+        dataset.append(featureSet)
+
+    return dataset
+
+
+
 def getProteinsMap(dataDir):
     fastaFiles = glob.glob(os.path.join(dataDir, '*.fasta'))
     pdbFiles = glob.glob(os.path.join(dataDir, '*.pdb'))
