@@ -3,23 +3,23 @@ import util
 import random
 import math
 
-def gradientAscent(learningRateCallback, epsilon, predictCallback, getDeltaCallback, getSubsetCallback, dataset):
+def gradientDescent(learningRateCallback, epsilon, predictCallback, getDeltaCallback, getSubsetCallback, dataset):
     recentDeltas = list()
-    weights = [0] * 201
+    weights = [0] * 51
 
     iterationCount = 0
     while len(recentDeltas) < 10:
         data = getSubsetCallback(dataset)
         deltas = list()
         etta = learningRateCallback(iterationCount, epsilon)
+        
         for d in data:
-            i, j, features, label = d
-            prediction = predictCallback(features, weights)
-            delta = getDeltaCallback(prediction, etta, d, weights)
+            misAssignment = misassignment(d, weights)
+            delta = getDeltaCallback(misAssignment, etta, d, weights)
             deltas.append(delta)
 
         colsum = [float(colDelta / len(data)) for colDelta in util.columnSum(deltas)]
-        #colsum = util.columnSum(deltas)
+
         maxColusum = max([abs(col) for col in colsum])
         if maxColusum > epsilon:
             recentDeltas = []
@@ -34,46 +34,37 @@ def gradientAscent(learningRateCallback, epsilon, predictCallback, getDeltaCallb
     print recentDeltas
     return weights
 
-def predict(instance, weights):  # adjusts with or without bias
+def misassignment(features, weights):  # adjusts with or without bias
     i = 0  # iterator for instance
     j = 0  # iterator for weights
     temp = 0
+    
+    if(len(features)+1) ==len(weights):
+        j+=1
 
-    if (len(instance) + 1) == len(weights):  # weights contain bias
-        temp += weights[j]  # bias
-        j += 1
+    while (i < len(features)-1):
 
-    while (i < len(instance)):
-        temp += instance[i] * weights[j]
+        temp += features[i] * weights[j]
+
         i += 1
         j += 1
 
     return temp
 
-def getDelta(prediction, learningRate, instance, weights):
-    pass
-
-def getDeltaMCLE(prediction, learningRate, instance, weight):
+def getDeltaMCLE(misAssignment, learningRate, dataset, weight):
     i = 0  # iterator for features
-    features = instance[2]
-    y = instance[-1]
+    features = dataset[0:50]
+    y = dataset[-1]
+    
     weightErrors = list()
-    w0Error = learningRate * 1 * (y - prediction)
+  
+    w0Error = learningRate * 2 * (y - misAssignment)
     weightErrors.append(w0Error)
     for feature in features:
-        weightErrors.append(learningRate * feature * (y - prediction))
+        weightErrors.append(2 * learningRate * feature * (y - misAssignment))
     return weightErrors
 
-def getDeltaMAP(prediction, learningRate, instance, weights):
-    lambdaa = 0.25
-    i = 0 #iterator for features
-    features = instance[2]
-    y = instance[3]
-    weightedErrorSum = 0
-    for feature in features:
-        weightedErrorSum += feature * (y - prediction)
-    delta = learningRate * weightedErrorSum - learningRate * lambdaa * weights
-    return delta
+
 
 def learningRate(iterationCount, epsilon):
     n = (8/2**(float(iterationCount)/512) + 1)*(epsilon * 10) # exponential slope that goes from 0.009 to 0.005 over about 2500 iterations
