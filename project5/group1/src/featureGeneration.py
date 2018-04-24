@@ -6,19 +6,26 @@ import glob
 from protein import Protein
 import re
 import random
+import cPickle
+
 
 def main(tmalign, dataDir):
     proteinsMap = getProteinsMap(dataDir)
-    for proteinName in proteinsMap:
-        print '\n\nProtein {0} has sequence {1}'.format(proteinName, proteinsMap[proteinName].getSequence())
-        print 'Protein {0} has PssmAvgs {1}'.format(proteinName, proteinsMap[proteinName].getPssmAvgs())
-        print 'Protein {0} has ExposedBurredAvgs {1}'.format(proteinName, proteinsMap[proteinName].getExposedBuriedAvgs())
-        print 'Protein {0} has HECAvgs {1}'.format(proteinName, proteinsMap[proteinName].getHECAvgs())
-
+    #for proteinName in proteinsMap:
+        #print '\n\nProtein {0} has sequence {1}'.format(proteinName, proteinsMap[proteinName].getSequence())
+        #print 'Protein {0} has PssmAvgs {1}'.format(proteinName, proteinsMap[proteinName].getPssmAvgs())
+        #print 'Protein {0} has ExposedBurredAvgs {1}'.format(proteinName, proteinsMap[proteinName].getExposedBuriedAvgs())
+        #print 'Protein {0} has HECAvgs {1}'.format(proteinName, proteinsMap[proteinName].getHECAvgs())
+     
     proteinPairs = getProteinPairs(proteinsMap)
-    pair = random.choice(proteinPairs)
-    print '\n\n\n{0} protein pairs found'.format(len(proteinPairs))
-    print '{0} paired with {1} :::::::::: {2}'.format(pair[0].getProteinName(), pair[1].getProteinName(), pair[0].getTmScoreAvg(tmalign, pair[1]))
+    trainData, testData = util.randomSplit(proteinPairs,0.75)
+    train_features = getDataset(trainData, tmalign)    
+    cPickle.dump(train_features,open('train_features.pickle','wb'))
+    test_features = getDataset(testData, tmalign)
+    cPickle.dump(test_features,open('test_features.pickle','wb'))
+    #pair = random.choice(proteinPairs)
+    #print '\n\n\n{0} protein pairs found'.format(len(proteinPairs))
+    #print '{0} paired with {1} :::::::::: {2}'.format(pair[0].getProteinName(), pair[1].getProteinName(), pair[0].getTmScoreAvg(tmalign, pair[1]))
 
 def getDataset(proteinPairs, tmalign):
     dataset = list()
@@ -27,17 +34,15 @@ def getDataset(proteinPairs, tmalign):
         proteinB = pair[1]
         featureSet = list(proteinA.getPssmAvgs())
         featureSet.extend(proteinB.getPssmAvgs())
-        featureSet.extend(proteinA.getHECAvgs())
-        featureSet.extend(proteinB.getHECAvgs())
-        featureSet.extend(proteinA.getExposedBuriedAvgs())
-        featureSet.extend(proteinB.getExposedBuriedAvgs())
+        featureSet.extend(proteinA.getHECAvgs().values())
+        featureSet.extend(proteinB.getHECAvgs().values())
+        featureSet.extend(proteinA.getExposedBuriedAvgs().values())
+        featureSet.extend(proteinB.getExposedBuriedAvgs().values())
         featureSet.append(proteinA.getTmScoreAvg(tmalign, proteinB))
 
         dataset.append(featureSet)
-
+    
     return dataset
-
-
 
 def getProteinsMap(dataDir):
     fastaFiles = glob.glob(os.path.join(dataDir, '*.fasta'))

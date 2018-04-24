@@ -14,8 +14,8 @@ def gradientDescent(learningRateCallback, epsilon, predictCallback, getDeltaCall
         etta = learningRateCallback(iterationCount, epsilon)
         
         for d in data:
-            misAssignment = misassignment(d, weights)
-            delta = getDeltaCallback(misAssignment, etta, d, weights)
+            prediction = predict(d, weights)
+            delta = getDeltaCallback(prediction, etta, d, weights)
             deltas.append(delta)
 
         colsum = [float(colDelta / len(data)) for colDelta in util.columnSum(deltas)]
@@ -34,34 +34,30 @@ def gradientDescent(learningRateCallback, epsilon, predictCallback, getDeltaCall
     print recentDeltas
     return weights
 
-def misassignment(features, weights):  # adjusts with or without bias
+def predict(features, weights): 
     i = 0  # iterator for instance
-    j = 0  # iterator for weights
-    temp = 0
+    j = 1  # iterator for weights
     
-    if(len(features)+1) ==len(weights):
-        j+=1
+    value = weights[0]
 
     while (i < len(features)-1):
+	value += (weights[j] * features[i])
+	i = i + 1
+        j = j + 1
 
-        temp += features[i] * weights[j]
+    return value			
 
-        i += 1
-        j += 1
-
-    return temp
-
-def getDeltaMCLE(misAssignment, learningRate, dataset, weight):
+def getDeltaMCLE(predict, learningRate, dataset, weight):
     i = 0  # iterator for features
     features = dataset[0:50]
     y = dataset[-1]
     
     weightErrors = list()
   
-    w0Error = learningRate * 2 * (y - misAssignment)
+    w0Error = learningRate * 2 * (y - predict)
     weightErrors.append(w0Error)
     for feature in features:
-        weightErrors.append(2 * learningRate * feature * (y - misAssignment))
+        weightErrors.append(2 * learningRate * feature * (y - predict))
     return weightErrors
 
 
