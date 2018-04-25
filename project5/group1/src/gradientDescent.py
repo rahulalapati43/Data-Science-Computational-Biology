@@ -5,7 +5,7 @@ import math
 
 def gradientDescent(learningRateCallback, epsilon, predictCallback, getDeltaCallback, getSubsetCallback, dataset):
     recentDeltas = list()
-    weights = [0] * 51
+    weights = [0] * 50
 
     iterationCount = 0
     while len(recentDeltas) < 10:
@@ -36,9 +36,9 @@ def gradientDescent(learningRateCallback, epsilon, predictCallback, getDeltaCall
 
 def predict(features, weights): 
     i = 0  # iterator for instance
-    j = 1  # iterator for weights
+    j = 0  # iterator for weights
     
-    value = weights[0]
+    value = 0
 
     while (i < len(features)-1):
 	value += (weights[j] * features[i])
@@ -54,8 +54,8 @@ def getDeltaMCLE(predict, learningRate, dataset, weight):
     
     weightErrors = list()
   
-    w0Error = learningRate * 2 * (y - predict)
-    weightErrors.append(w0Error)
+    #w0Error = learningRate * 2 * (y - predict)
+    #weightErrors.append(w0Error)
     for feature in features:
         weightErrors.append(2 * learningRate * feature * (y - predict))
     return weightErrors

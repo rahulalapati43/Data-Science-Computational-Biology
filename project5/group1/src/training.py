@@ -13,13 +13,13 @@ def main(dataDir, batchSize):
     dataset = cPickle.load(open('train_features.pickle','rb')) 
 
     epsilon = 0.0005
-    learningRate = lambda x,y: 0.01
+    #learningRate = lambda x,y: 0.01
     if batchSize is not None:
         print 'Running batch with size {0}'.format(batchSize)
         weights = gd.gradientDescent(gd.learningRate, epsilon, gd.predict, gd.getDeltaMCLE, gd.getSubsetBatch, dataset)
     else:
         print 'Running stochastic gradient descent'
-        weights = gd.gradientDescent(learningRate, epsilon, gd.predict, gd.getDeltaMCLE, gd.getSubsetStochastic, dataset)
+        weights = gd.gradientDescent(gd.learningRate, epsilon, gd.predict, gd.getDeltaMCLE, gd.getSubsetStochastic, dataset)
     print '============================= weights ====================================='
     print weights
 
