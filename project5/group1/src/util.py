@@ -25,7 +25,7 @@ def decodeFastaformat(fasta):
     return output
 
 def generatePSSM(multifastaFile, outfileDir, blastpgp, nrdb):
-    fastaSequences = decodeFastaformat(open(multifastaFile, 'r'))
+    fastaSequences = decodeFastaformat(multifastaFile)
     pssmFiles = list()
     aminoAcidCount = 0
     for ind, seq in enumerate(fastaSequences):

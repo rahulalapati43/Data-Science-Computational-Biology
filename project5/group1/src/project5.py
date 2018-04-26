@@ -3,51 +3,33 @@ import util
 import sys
 import os
 import cPickle
-import gradientAscent
-import featureGeneration
+import gradientDescent
+from protein import Protein
 
-def main(blastpgp, nrdb, model, fastaFile):
-    weights = cPickle.load(open(model))
-    pssmFiles = util.generatePSSM(fastaFile, './', blastpgp, nrdb)
+def main(blastpgp, nrdb, modelPickle, proteinAFasta, proteinBFasta):
+    with open(modelPickle, 'rb') as f:
+        weights = cPickle.load(f)
+    proteinA = Protein('proteinA')
+    proteinA.setFastaFile(proteinAFasta)
+    proteinA.setPssmFile(util.generatePSSM(proteinAFasta, './', blastpgp, nrdb)[0])
 
-    fastaList = util.decodeFastaformat(open(fastaFile, 'r'))
-    proteinName, proteinSequence = fastaList[0]
-    contactInstances = getContactPairs(proteinSequence, featureGeneration.pssmsMap(pssmFiles))
+    proteinB = Protein('proteinB')
+    proteinB.setFastaFile(proteinBFasta)
+    proteinB.setPssmFile(util.generatePSSM(proteinBFasta, './', blastpgp, nrdb)[0])
 
-    rrFile = open(proteinName + '.rr', 'w')
+    features = list(proteinA.getPssmAvgs())
+    features.extend(proteinB.getPssmAvgs())
+    features.extend(proteinA.getHECAvgs().values())
+    features.extend(proteinB.getHECAvgs().values())
+    features.extend(proteinA.getExposedBuriedAvgs().values())
+    features.extend(proteinB.getExposedBuriedAvgs().values())
 
-    print >>sys.stdout, proteinSequence
-    print >>rrFile, proteinSequence
-    for instance in contactInstances:
-        probability = gradientAscent.predict(instance[2], weights)
-        instance[3] = probability
+    predictedTMScore = gradientDescent.predict(features, weights)
 
-    contactInstances.sort(key=lambda x: x[3], reverse=True)
-
-    for instance in contactInstances:
-        i = instance[0]
-        j = instance[1]
-        probability = instance[3]
-        print >>sys.stdout, i + ' ' + j + ' 0 8 ' + str(probability)
-        print >>rrFile, i + ' ' + j + ' 0 8 ' + str(probability)
-
-    print >>sys.stderr, 'Also wrote to rr file ' + proteinName + '.rr'
-
-def getContactPairs(sequence, pssmsMap):
-    pssmFeaturesByPosition = pssmsMap[sequence]
-    pairs = list()
-    for i in range(len(sequence) - 6):
-        for j in range(i+6, len(sequence)): 
-            features = list(pssmFeaturesByPosition[i])
-            features.extend(list(pssmFeaturesByPosition[j]))
-            pairs.append([str(i+1), str(j+1), features, None])
-
-    return pairs
-
-
+    print predictedTMScore
 
 if __name__ == "__main__":
-    if len(sys.argv) < 5:
-        print "Usage: " + sys.argv[0] + " /path/to/blastpgp /path/to/nrdb/file model.pickle FASTA_file"
+    if len(sys.argv) < 6:
+        print "Usage: " + sys.argv[0] + " /path/to/blastpgp /path/to/nrdb/file model.pickle FASTA_file_A FASTA_file_B"
     else:
-        main(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
+        main(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5])
